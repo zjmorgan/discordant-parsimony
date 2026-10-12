@@ -1,0 +1,13 @@
+name: discordant
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.11
+  - numpy
+  - scipy
+  - pycifrw
+  - h5py
+  - matplotlib
+  - pip
+  - pytest
+  - black

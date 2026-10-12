@@ -218,3 +218,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Private experimental data and products (never commit)
+/local_data/
+/data/private/
+/results/
+/benchmarks/output/
+/tests/data/
+*:com.dropbox.attrs
+src/discordant_parsimony/_version.py
