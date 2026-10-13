@@ -2,7 +2,7 @@ Data Handling: Private Data, Formats, and Reduction
 ===================================================
 
 Covers where experimental data live, which formats are read, and how a
-normalised, background-subtracted volume is formed. Experimental data
+normalized, background-subtracted volume is formed. Experimental data
 and the products derived from them are never committed to the
 repository.
 
@@ -30,7 +30,7 @@ What a dataset needs
   ``_symmetry_equiv_pos_as_xyz``), occupancies, displacement parameters
   (``Uani`` or ``Uiso``), and type symbols.
 - Volumes as Mantid MDHistoWorkspaces saved with ``SaveMD``: sample
-  data and normalisation, and background data and normalisation.
+  data and normalization, and background data and normalization.
 - Whether the data are neutron or X-ray (only neutron is supported at
   present), the temperature, and the Laue group used to symmetrize the
   volume, if any.
@@ -49,4 +49,4 @@ Miller indices :math:`\mathbf{h} = W\mathbf{u}`.
      - s\,\frac{\text{background data}}{\text{background norm}},
 
 propagating uncorrelated uncertainties and marking bins with
-non-positive normalisation as invalid.
+non-positive normalization as invalid.

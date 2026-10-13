@@ -1332,7 +1332,7 @@ pairs beyond the cutoff are omitted.</p>
 \[I(\mathbf{Q}) = \sum_p w_p \, e^{i \mathbf{Q} \cdot \mathbf{d}_p}
 \exp\left(-\tfrac{1}{2} \mathbf{Q}^\mathsf{T} U_p \mathbf{Q}\right),\]</div>
 <p>equivalently a 3D-<span class="math notranslate nohighlight">\(\Delta\)</span>PDF made of Gaussians of weight
-<span class="math notranslate nohighlight">\(w_p\)</span> and covariance <span class="math notranslate nohighlight">\(U_p\)</span> centred on pair vectors
+<span class="math notranslate nohighlight">\(w_p\)</span> and covariance <span class="math notranslate nohighlight">\(U_p\)</span> centered on pair vectors
 <span class="math notranslate nohighlight">\(\mathbf{d}_p\)</span>. Occupational disorder on split sites gives
 <span class="math notranslate nohighlight">\(w = b_i b_j C_{ij}(\mathbf{R})\)</span> at
 <span class="math notranslate nohighlight">\(\mathbf{d} = \mathbf{R} + \mathbf{x}_j - \mathbf{x}_i\)</span> with
@@ -1564,8 +1564,8 @@ background between features.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.asymmetric_unit">
-<span class="sig-name descname"><span class="pre">asymmetric_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L211-L248"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.asymmetric_unit" title="Link to this definition">#</a></dt>
-<dd><p>Representatives of Laue orbits on a centred regular grid.</p>
+<span class="sig-name descname"><span class="pre">asymmetric_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L211-L248"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.asymmetric_unit" title="Link to this definition">#</a></dt>
+<dd><p>Representatives of Laue orbits on a centered regular grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1573,7 +1573,7 @@ background between features.</p></li>
 </dd>
 <dt><strong>shape</strong><span class="classifier">tuple of int</span></dt><dd><p>Grid shape.</p>
 </dd>
-<dt><strong>centre</strong><span class="classifier">tuple of int</span></dt><dd><p>Index of h = 0 along each axis; the grid must be symmetric about
+<dt><strong>center</strong><span class="classifier">tuple of int</span></dt><dd><p>Index of h = 0 along each axis; the grid must be symmetric about
 it with equal steps along h, k, l so that Laue images of grid
 points are grid points.</p>
 </dd>
@@ -2163,7 +2163,7 @@ is used.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.io.Volume.hkl">
 <span class="sig-name descname"><span class="pre">hkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L67-L83"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume.hkl" title="Link to this definition">#</a></dt>
-<dd><p>Miller indices of bin centres.</p>
+<dd><p>Miller indices of bin centers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -2244,10 +2244,10 @@ is used.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.io.reduce_volume">
 <span class="sig-name descname"><span class="pre">reduce_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L132-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.reduce_volume" title="Link to this definition">#</a></dt>
-<dd><p>Normalised, background-subtracted volume.</p>
+<dd><p>Normalized, background-subtracted volume.</p>
 <p>Computes <code class="docutils literal notranslate"><span class="pre">data/norm</span> <span class="pre">-</span> <span class="pre">scale</span> <span class="pre">*</span> <span class="pre">background_data/background_norm</span></code>
 with uncorrelated error propagation. Bins with non-positive
-normalisation are <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p>
+normalization are <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
