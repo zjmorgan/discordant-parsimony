@@ -1,11 +1,19 @@
-"""Symmetry-independent pair correlations.
+r"""Symmetry-independent pair correlations.
 
-A pair ``(i, j, R)`` joins position ``i`` in the origin cell to position
-``j`` in cell ``R``. A space-group operator ``(W, t)`` maps it to
-``(i', j', R')`` with ``W x_i + t = x_i' + L_i``, ``W x_j + t = x_j' +
-L_j`` and ``R' = W R + L_j - L_i``; pair reversal maps it to
-``(j, i, -R)``. Correlations with the full symmetry of the average
-structure are equal on each orbit, so one coefficient per orbit
+A pair :math:`(i, j, \mathbf{R})` joins position :math:`i` in the
+origin cell to position :math:`j` in cell :math:`\mathbf{R}`. A
+space-group operator :math:`(W, \mathbf{t})` maps it to
+:math:`(i', j', \mathbf{R}')` with
+
+.. math::
+
+    W \mathbf{x}_i + \mathbf{t} = \mathbf{x}_{i'} + \mathbf{L}_i, \quad
+    W \mathbf{x}_j + \mathbf{t} = \mathbf{x}_{j'} + \mathbf{L}_j, \quad
+    \mathbf{R}' = W \mathbf{R} + \mathbf{L}_j - \mathbf{L}_i;
+
+pair reversal maps it to :math:`(j, i, -\mathbf{R})`. Correlations with
+the full symmetry of the average structure are equal on each orbit, so
+one coefficient per orbit
 describes them. Pairs are selected with a distance cutoff, which is
 invariant under the group.
 """
@@ -16,7 +24,7 @@ import numpy as np
 
 
 def position_permutations(structure, sites, tol=1e-4):
-    """
+    r"""
     Action of each operator on the positions of one cell.
 
     Parameters
@@ -33,7 +41,8 @@ def position_permutations(structure, sites, tol=1e-4):
     perm : ndarray of int, (g, n)
         ``perm[g, i]`` is the image position of ``i``.
     shift : ndarray of int, (g, n, 3)
-        Lattice vector with ``W x_i + t = x_perm + shift``.
+        Lattice vector with :math:`W \mathbf{x}_i + \mathbf{t} =
+        \mathbf{x}_{\mathrm{perm}} + \mathbf{L}`.
 
     """
 
@@ -55,7 +64,7 @@ def position_permutations(structure, sites, tol=1e-4):
 
 @dataclass
 class PairOrbits:
-    """
+    r"""
     Pairs within a cutoff, grouped into symmetry orbits.
 
     Attributes
@@ -65,7 +74,8 @@ class PairOrbits:
     R : ndarray of int, (m, 3)
         Cell translation of ``j``.
     d : ndarray, (m, 3)
-        Pair vectors ``R + x_j - x_i`` (fractional).
+        Pair vectors :math:`\mathbf{R} + \mathbf{x}_j - \mathbf{x}_i`
+        (fractional).
     orbit : ndarray of int, (m,)
         Orbit index of each pair, ``0 .. n_orbits - 1``, ordered by
         pair distance.
@@ -165,7 +175,7 @@ def pair_orbits(structure, sites, max_distance, tol=1e-6):
 
 
 def orbit_average(orbits, R, C):
-    """
+    r"""
     Project a covariance onto orbit coefficients (symmetrize).
 
     Parameters
@@ -175,7 +185,8 @@ def orbit_average(orbits, R, C):
     R : ndarray of int, (k, 3)
         Translations of the covariance array.
     C : ndarray, (k, n, n)
-        Covariance ``C[k, i, j] = <dn_i(0) dn_j(R_k)>``.
+        Covariance ``C[k, i, j]`` :math:`= \langle \delta n_i(\mathbf{0})\,
+        \delta n_j(\mathbf{R}_k) \rangle`.
 
     Returns
     -------
@@ -212,7 +223,7 @@ def orbit_pair_terms(orbits, sites, c, thermal=True, b=None):
     c : array_like, (n_orbits,)
         Occupation covariance of each orbit.
     thermal : bool, optional
-        Smear by ``U_i + U_j``.
+        Smear by :math:`U_i + U_j`.
     b : array_like, (n,), optional
         Scattering lengths in fm. Defaults to neutron values.
 

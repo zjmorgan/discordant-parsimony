@@ -1,8 +1,10 @@
-"""Real-space view of pair terms: the model 3D-delta-PDF.
+r"""Real-space view of pair terms: the model 3D-:math:`\Delta`\ PDF.
 
-The pair terms ``(d, w, U)`` define
+The pair terms :math:`(\mathbf{d}_p, w_p, U_p)` define
 
-    dPDF(r) = sum_p  w_p G(r - d_p; U_p),
+.. math::
+
+    \Delta P(\mathbf{r}) = \sum_p w_p\, G(\mathbf{r} - \mathbf{d}_p;\, U_p),
 
 whose Fourier transform is the diffuse intensity evaluated by
 :func:`discordant_parsimony.scattering.evaluate`.
@@ -13,7 +15,7 @@ from scipy.special import erf
 
 
 def delta_pdf_slab(terms, structure, x, y, z_range, window=5.0):
-    """
+    r"""
     Model 3D-delta-PDF averaged over a slab of constant ``z``.
 
     Each Gaussian is integrated exactly over ``z`` in ``z_range`` using
@@ -38,7 +40,8 @@ def delta_pdf_slab(terms, structure, x, y, z_range, window=5.0):
     Returns
     -------
     pdf : ndarray, (len(y), len(x))
-        Density in fm^2 per unit cell per Angstrom^3.
+        Density in :math:`\mathrm{fm}^2` per unit cell per
+        :math:`\mathring{\mathrm{A}}^3`.
 
     """
 

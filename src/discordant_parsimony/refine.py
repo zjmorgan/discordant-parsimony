@@ -1,14 +1,20 @@
-"""Linear least-squares refinement of pair-correlation coefficients.
+r"""Linear least-squares refinement of pair-correlation coefficients.
 
-The model for observed intensities ``y`` with uncertainties ``sigma`` is
+The model for observed intensities :math:`y` with uncertainties
+:math:`\sigma` is
 
-    y = s * (A_fixed c_fixed + A_free c_free) + B beta,
+.. math::
 
-where ``A`` holds design columns of the pair orbits, ``c_fixed`` are
-coefficients known exactly from the average structure (they set the
-absolute scale), ``s`` is the scale factor and ``B`` a smooth background
-basis. With ``u = s c_free`` the problem is linear in ``(s, u, beta)``
-and is solved in one weighted least-squares step.
+    y = s\,(A_\mathrm{fixed} \mathbf{c}_\mathrm{fixed}
+    + A_\mathrm{free} \mathbf{c}_\mathrm{free}) + B \boldsymbol{\beta},
+
+where :math:`A` holds design columns of the pair orbits,
+:math:`\mathbf{c}_\mathrm{fixed}` are coefficients known exactly from
+the average structure (they set the absolute scale), :math:`s` is the
+scale factor and :math:`B` a smooth background basis. With
+:math:`\mathbf{u} = s\,\mathbf{c}_\mathrm{free}` the problem is linear in
+:math:`(s, \mathbf{u}, \boldsymbol{\beta})` and is solved in one
+weighted least-squares step.
 """
 
 from dataclasses import dataclass
@@ -69,15 +75,16 @@ class Refinement:
 
 
 def r_factors(y, sigma, model):
-    """
+    r"""
     Agreement factors.
 
     Returns
     -------
     R : float
-        ``sum |y - m| / sum |y|``.
+        :math:`\sum |y - m| / \sum |y|`.
     wR : float
-        ``sqrt(sum w (y - m)^2 / sum w y^2)`` with ``w = 1 / sigma^2``.
+        :math:`\sqrt{\sum w (y - m)^2 / \sum w y^2}` with
+        :math:`w = 1 / \sigma^2`.
 
     """
 
@@ -88,15 +95,15 @@ def r_factors(y, sigma, model):
 
 
 def background_basis(Q, degree=1):
-    """
-    Polynomial background in ``|Q|^2``.
+    r"""
+    Polynomial background in :math:`|\mathbf{Q}|^2`.
 
     Parameters
     ----------
     Q : ndarray, (m,)
         ``|Q|`` in inverse Angstrom.
     degree : int, optional
-        Highest power of ``|Q|^2``; ``-1`` for no background.
+        Highest power of :math:`|\mathbf{Q}|^2`; ``-1`` for no background.
 
     Returns
     -------
@@ -118,10 +125,11 @@ def refine(
     ridge=0.0,
     rcond=1e-10,
 ):
-    """
+    r"""
     Refine orbit coefficients against observed intensities.
 
-    Coefficients are ``c = c0 + N theta`` (see
+    Coefficients are :math:`\mathbf{c} = \mathbf{c}_0 + N
+    \boldsymbol{\theta}` (see
     :func:`discordant_parsimony.constraints.parameterize`). When ``c0``
     is nonzero (coefficients fixed by the average structure) it sets the
     absolute scale and a scale factor ``s`` is refined, with

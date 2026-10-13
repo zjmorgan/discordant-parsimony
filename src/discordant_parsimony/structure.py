@@ -1,14 +1,23 @@
-"""Average crystal structure: lattice, symmetry, and atomic sites.
+r"""Average crystal structure: lattice, symmetry, and atomic sites.
 
 Conventions
 -----------
-Fractional coordinates ``x`` and Miller indices ``h`` (r.l.u.) refer to
-the cell given in the CIF. Direct basis vectors are the columns of ``A``
-(Cartesian, Angstrom), with ``a`` along Cartesian x and ``b`` in the xy
-plane. Reciprocal basis vectors (without the 2*pi) are the columns of
-``B = inv(A).T``, so that ``Q = 2*pi * B @ h`` (inverse Angstrom) and
-``Q . (A @ x) = 2*pi * h . x``. Displacement parameters ``U`` are stored
-as Cartesian covariance tensors in Angstrom^2.
+Fractional coordinates :math:`\mathbf{x}` and Miller indices
+:math:`\mathbf{h}` (r.l.u.) refer to the cell given in the CIF. Direct
+basis vectors are the columns of :math:`A` (Cartesian,
+:math:`\mathring{\mathrm{A}}`), with :math:`\mathbf{a}` along Cartesian
+:math:`x` and :math:`\mathbf{b}` in the :math:`xy` plane. Reciprocal
+basis vectors (without the :math:`2\pi`) are the columns of
+:math:`B = (A^{-1})^\mathsf{T}`, so that
+
+.. math::
+
+    \mathbf{Q} = 2\pi B \mathbf{h}, \qquad
+    \mathbf{Q} \cdot (A \mathbf{x}) = 2\pi\, \mathbf{h} \cdot \mathbf{x},
+
+with :math:`\mathbf{Q}` in :math:`\mathring{\mathrm{A}}^{-1}`.
+Displacement parameters :math:`U` are stored as Cartesian covariance
+tensors in :math:`\mathring{\mathrm{A}}^2`.
 """
 
 import re
@@ -93,7 +102,7 @@ def lattice_vectors(a, b, c, alpha, beta, gamma):
 
 @dataclass
 class Sites:
-    """
+    r"""
     Atomic positions in one unit cell.
 
     Attributes
@@ -107,7 +116,7 @@ class Sites:
     x : ndarray, (n, 3)
         Fractional coordinates in [0, 1).
     U : ndarray, (n, 3, 3)
-        Cartesian displacement covariance in Angstrom^2.
+        Cartesian displacement covariance in :math:`\mathring{\mathrm{A}}^2`.
 
     """
 

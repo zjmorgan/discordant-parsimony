@@ -1,4 +1,10 @@
-"""Occupation covariances ``C_ij(R) = <dn_i(0) dn_j(R)>``.
+r"""Occupation covariances.
+
+.. math::
+
+    C_{ij}(\mathbf{R}) = \langle \delta n_i(\mathbf{0})\,
+    \delta n_j(\mathbf{R}) \rangle, \qquad \delta n = n - \langle n \rangle.
+
 
 Covariances may come from an analytic model or be estimated from
 occupation configurations of a periodic lattice of cells. Only the
@@ -30,7 +36,7 @@ def translations(max_offset):
 
 
 def covariance_from_configurations(occupation, max_offset, mean=None):
-    """
+    r"""
     Estimate occupation covariances from periodic configurations.
 
     Parameters
@@ -50,7 +56,8 @@ def covariance_from_configurations(occupation, max_offset, mean=None):
     R : ndarray of int, (k, 3)
         Cell translations.
     C : ndarray, (k, n, n)
-        ``C[k, i, j] = <dn_i(0) dn_j(R_k)>`` averaged over cells and
+        ``C[k, i, j]`` :math:`= \langle \delta n_i(\mathbf{0})\,
+        \delta n_j(\mathbf{R}_k) \rangle` averaged over cells and
         configurations.
 
     """
@@ -76,11 +83,11 @@ def covariance_from_configurations(occupation, max_offset, mean=None):
 
 
 def independent_cluster_covariance(sites, clusters):
-    """
+    r"""
     Covariance of independent split-site clusters (no local order).
 
     Within a cluster at most one member is occupied, so
-    ``C_ab = x_a delta_ab - x_a x_b``; different clusters are
+    :math:`C_{ab} = x_a \delta_{ab} - x_a x_b`; different clusters are
     uncorrelated.
 
     Parameters
@@ -119,11 +126,11 @@ def independent_cluster_covariance(sites, clusters):
 
 
 def fixed_cluster_orbits(orbits, sites, clusters):
-    """
+    r"""
     Orbit coefficients fixed exactly by the average structure.
 
     Pairs inside one split-site cluster (including self pairs) have
-    ``C_ab = x_a delta_ab - x_a x_b``, independent of any local order.
+    :math:`C_{ab} = x_a \delta_{ab} - x_a x_b`, independent of any local order.
 
     Parameters
     ----------

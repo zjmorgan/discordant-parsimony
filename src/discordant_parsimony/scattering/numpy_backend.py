@@ -27,11 +27,17 @@ def _tensor_components(U):
 
 
 def evaluate(h, terms, structure, max_elements=2**22, check=False):
-    """
+    r"""
     Diffuse intensity of pair terms at arbitrary reciprocal positions.
 
-    Computes ``I = sum_p w_p cos(2 pi h . d_p) exp(-Q^T U_p Q / 2)`` by
-    direct summation in tiles of at most ``max_elements`` Q-term
+    Computes
+
+    .. math::
+
+        I(\mathbf{Q}) = \sum_p w_p \cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)
+        \exp\left(-\tfrac{1}{2} \mathbf{Q}^\mathsf{T} U_p \mathbf{Q}\right)
+
+    by direct summation in tiles of at most ``max_elements`` Q-term
     products, never forming the full Q-by-terms matrix.
 
     Parameters
@@ -51,7 +57,7 @@ def evaluate(h, terms, structure, max_elements=2**22, check=False):
     Returns
     -------
     I : ndarray, (...)
-        Intensity in fm^2 per unit cell.
+        Intensity in :math:`\mathrm{fm}^2` per unit cell.
 
     """
 
@@ -95,12 +101,19 @@ def design_matrix(
     b=None,
     max_elements=2**22,
 ):
-    """
+    r"""
     Intensity per unit covariance of each pair orbit.
 
-    Column ``k`` is ``A_k(Q) = sum_{p in orbit k} b_i b_j
-    exp(-W_i - W_j) cos(2 pi h . d_p) prod_a sinc(dh_a d_a)``, so that
-    ``I = A @ c`` for orbit coefficients ``c``.
+    Column :math:`k` is
+
+    .. math::
+
+        A_k(\mathbf{Q}) = \sum_{p \in k} b_i b_j\, e^{-W_i - W_j}
+        \cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)
+        \prod_a \operatorname{sinc}(\Delta h_a d_{p,a}),
+
+    so that :math:`I = A \mathbf{c}` for orbit coefficients
+    :math:`\mathbf{c}`.
 
     Parameters
     ----------

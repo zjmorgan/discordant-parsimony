@@ -18,7 +18,7 @@ import numpy as np
 
 @dataclass
 class Contacts:
-    """
+    r"""
     Directed contacts ``i -> j`` at cell translation ``R``.
 
     Attributes
@@ -28,7 +28,8 @@ class Contacts:
     R : ndarray of int, (m, 3)
         Cell translation of ``j`` relative to ``i``.
     distance : ndarray, (m,)
-        Separation ``|A (R + x_j - x_i)|`` in Angstrom.
+        Separation :math:`|A (\mathbf{R} + \mathbf{x}_j - \mathbf{x}_i)|`
+        in :math:`\mathring{\mathrm{A}}`.
 
     """
 

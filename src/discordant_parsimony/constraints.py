@@ -1,4 +1,4 @@
-"""Exact linear constraints on orbit coefficients and their solution.
+r"""Exact linear constraints on orbit coefficients and their solution.
 
 Two kinds of relation are imposed, both independent of any model of the
 local order:
@@ -6,14 +6,15 @@ local order:
 * sum rules: a split-site cluster without vacancies always holds exactly
   one atom, so the fluctuations of its members sum to zero and their
   covariances with any position sum to zero,
-  ``sum_a C(a @ o_a, j @ R) = 0``;
+  :math:`\sum_a C(a \,@\, \mathbf{o}_a,\, j \,@\, \mathbf{R}) = 0`;
 * homometric ties: orbits whose pair vectors, scattering-length products
   and displacement tensors coincide give identical intensities, so only
   their sum is measurable; they are tied equal (each then carries the
   average of the group).
 
 Together with coefficients fixed by the average structure they define
-``c = c0 + N theta`` with free parameters ``theta``.
+:math:`\mathbf{c} = \mathbf{c}_0 + N \boldsymbol{\theta}` with free
+parameters :math:`\boldsymbol{\theta}`.
 """
 
 from dataclasses import dataclass
@@ -130,8 +131,9 @@ def tie_rows(group, exclude=()):
 
 @dataclass
 class Parameterization:
-    """
-    Coefficients ``c = c0 + N theta`` satisfying all constraints.
+    r"""
+    Coefficients :math:`\mathbf{c} = \mathbf{c}_0 + N \boldsymbol{\theta}`
+    satisfying all constraints.
 
     Attributes
     ----------

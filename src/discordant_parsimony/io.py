@@ -31,7 +31,7 @@ def data_root():
 
 @dataclass
 class Volume:
-    """
+    r"""
     Histogrammed reciprocal-space volume on a regular grid.
 
     Attributes
@@ -43,8 +43,9 @@ class Volume:
     edges : list of ndarray
         Bin edges along each axis.
     W : ndarray, (3, 3)
-        Projection matrix; Miller indices are ``h = W @ u`` for axis
-        coordinates ``u``.
+        Projection matrix; Miller indices are
+        :math:`\mathbf{h} = W \mathbf{u}` for axis coordinates
+        :math:`\mathbf{u}`.
 
     """
 

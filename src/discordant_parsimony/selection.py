@@ -1,4 +1,4 @@
-"""Crystallographic selection of reciprocal-space positions.
+r"""Crystallographic selection of reciprocal-space positions.
 
 Measured volumes are reduced to the positions that carry independent
 diffuse information:
@@ -6,9 +6,11 @@ diffuse information:
 * Bragg regions are excluded around reflections allowed by the lattice
   centering;
 * symmetrized data are reduced to one representative per Laue orbit;
-* diffuse features are targeted like satellites, at points ``G + k`` or
-  along lines ``G + k + t v`` for allowed ``G`` and the Laue star of
-  ``k`` and ``v``;
+* diffuse features are targeted like satellites, at points
+  :math:`\mathbf{G} + \mathbf{k}` or along lines
+  :math:`\mathbf{G} + \mathbf{k} + t \mathbf{v}` for allowed
+  :math:`\mathbf{G}` and the Laue star of :math:`\mathbf{k}` and
+  :math:`\mathbf{v}`;
 * a reproducible random fraction of the remaining positions samples the
   background between features.
 """
@@ -121,8 +123,9 @@ def _star(vectors, structure):
 
 
 def satellite_mask(h, structure, k, radius):
-    """
-    Positions within ``radius`` of satellites ``G + k`` (star of ``k``).
+    r"""
+    Positions within ``radius`` of satellites :math:`\mathbf{G} + \mathbf{k}`
+    (star of :math:`\mathbf{k}`).
 
     Parameters
     ----------
@@ -149,8 +152,9 @@ def satellite_mask(h, structure, k, radius):
 
 
 def line_mask(h, structure, k, direction, radius):
-    """
-    Positions within ``radius`` of lines ``G + k + t v``.
+    r"""
+    Positions within ``radius`` of lines
+    :math:`\mathbf{G} + \mathbf{k} + t \mathbf{v}`.
 
     The Laue group is applied to ``(k, v)`` jointly, so the star of the
     line is generated. Distance is measured perpendicular to the line.
@@ -292,7 +296,7 @@ def select(
     symmetrized=True,
     seed=0,
 ):
-    """
+    r"""
     Select positions of a measured volume for refinement.
 
     Parameters
@@ -310,7 +314,7 @@ def select(
     background_fraction : float, optional
         Fraction of the remaining valid positions sampled at random.
     q_range : tuple of float, optional
-        Allowed ``|Q|`` range in inverse Angstrom.
+        Allowed :math:`|\mathbf{Q}|` range in inverse Angstrom.
     symmetrized : bool, optional
         Keep one representative per Laue orbit.
     seed : int, optional

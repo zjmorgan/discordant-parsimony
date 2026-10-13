@@ -1,16 +1,23 @@
-"""Weighted Gaussian pair terms: the common currency of all models.
+r"""Weighted Gaussian pair terms: the common currency of all models.
 
-Every nuclear diffuse model is reduced to terms ``(d, w, U)`` with
+Every nuclear diffuse model is reduced to terms
+:math:`(\mathbf{d}_p, w_p, U_p)` with
 
-    I(Q) = sum_p  w_p * exp(i Q . d_p) * exp(-Q^T U_p Q / 2),
+.. math::
 
-equivalently a 3D-delta-PDF made of Gaussians of weight ``w_p`` and
-covariance ``U_p`` centred on pair vectors ``d_p``. Occupational
-disorder on split sites gives ``w = b_i b_j C_ij(R)`` at
-``d = R + x_j - x_i`` with ``U = U_i + U_j`` for uncorrelated thermal
-motion. Term sets must be closed under ``(d, w, U) -> (-d, w, U)``,
-which holds for any covariance with ``C_ij(R) = C_ji(-R)``; the
-intensity is then real.
+    I(\mathbf{Q}) = \sum_p w_p \, e^{i \mathbf{Q} \cdot \mathbf{d}_p}
+    \exp\left(-\tfrac{1}{2} \mathbf{Q}^\mathsf{T} U_p \mathbf{Q}\right),
+
+equivalently a 3D-:math:`\Delta`\ PDF made of Gaussians of weight
+:math:`w_p` and covariance :math:`U_p` centred on pair vectors
+:math:`\mathbf{d}_p`. Occupational disorder on split sites gives
+:math:`w = b_i b_j C_{ij}(\mathbf{R})` at
+:math:`\mathbf{d} = \mathbf{R} + \mathbf{x}_j - \mathbf{x}_i` with
+:math:`U = U_i + U_j` for uncorrelated thermal motion. Term sets must
+be closed under :math:`(\mathbf{d}, w, U) \to (-\mathbf{d}, w, U)`,
+which holds for any covariance with
+:math:`C_{ij}(\mathbf{R}) = C_{ji}(-\mathbf{R})`; the intensity is
+then real.
 """
 
 from dataclasses import dataclass
@@ -20,18 +27,19 @@ import numpy as np
 
 @dataclass
 class PairTerms:
-    """
-    Pair terms ``(d, w, U)``.
+    r"""
+    Pair terms :math:`(\mathbf{d}, w, U)`.
 
     Attributes
     ----------
     d : ndarray, (n, 3)
         Pair vectors in fractional coordinates.
     w : ndarray, (n,)
-        Weights in fm^2 per unit cell.
+        Weights in :math:`\mathrm{fm}^2` per unit cell.
     U : ndarray, (n, 3, 3) or None
-        Cartesian Gaussian covariance in Angstrom^2, or ``None`` for
-        point (unsmeared) terms.
+        Cartesian Gaussian covariance in
+        :math:`\mathring{\mathrm{A}}^2`, or ``None`` for point
+        (unsmeared) terms.
 
     """
 
@@ -60,20 +68,26 @@ class PairTerms:
         return cls(d, w, U)
 
     def prune(self, tol):
-        """Drop terms with ``|w| <= tol``."""
+        r"""Drop terms with :math:`|w| \le` ``tol``."""
 
         keep = np.abs(self.w) > tol
         U = self.U[keep] if self.U is not None else None
         return PairTerms(self.d[keep], self.w[keep], U)
 
     def bin_average(self, widths):
-        """
+        r"""
         Average over rectangular reciprocal-space bins.
 
-        Averaging ``exp(2 pi i h . d)`` over a bin of widths ``dh`` in
-        r.l.u. multiplies each term by ``prod_a sinc(dh_a d_a)``. This is
-        exact for point terms and neglects the variation of the Gaussian
-        factor across a bin otherwise.
+        Averaging :math:`e^{2\pi i \mathbf{h} \cdot \mathbf{d}}` over a bin
+        of widths :math:`\Delta h_a` in r.l.u. multiplies each term by
+
+        .. math::
+
+            \prod_a \operatorname{sinc}(\Delta h_a d_a), \qquad
+            \operatorname{sinc}(x) = \frac{\sin \pi x}{\pi x}.
+
+        This is exact for point terms and neglects the variation of the
+        Gaussian factor across a bin otherwise.
 
         Parameters
         ----------
@@ -90,10 +104,11 @@ class PairTerms:
         return PairTerms(self.d, self.w * factor, self.U)
 
     def merge(self, decimals=8):
-        """
+        r"""
         Combine reversed and coincident terms.
 
-        Each ``(d, U)`` is mapped to a canonical sign of ``d`` and terms
+        Each :math:`(\mathbf{d}, U)` is mapped to a canonical sign of
+        :math:`\mathbf{d}` and terms
         with identical keys are summed. Valid only for reversal-closed
         sets, for which the intensity is a cosine sum.
 
@@ -129,7 +144,7 @@ class PairTerms:
 
 
 def pair_terms_from_covariance(sites, R, C, thermal=True, b=None):
-    """
+    r"""
     Pair terms of occupational (split-site) covariances.
 
     Parameters
@@ -139,10 +154,12 @@ def pair_terms_from_covariance(sites, R, C, thermal=True, b=None):
     R : ndarray of int, (m, 3)
         Cell translations.
     C : ndarray, (m, n, n)
-        Occupation covariance ``C[k, i, j] = <dn_i(0) dn_j(R_k)>``.
+        Occupation covariance ``C[k, i, j]``
+        :math:`= \langle \delta n_i(\mathbf{0})\,
+        \delta n_j(\mathbf{R}_k) \rangle`.
     thermal : bool, optional
-        Smear each term by ``U_i + U_j`` (uncorrelated Gaussian motion,
-        i.e. Debye-Waller factors ``exp(-W_i - W_j)``).
+        Smear each term by :math:`U_i + U_j` (uncorrelated Gaussian
+        motion, i.e. Debye-Waller factors :math:`e^{-W_i - W_j}`).
     b : array_like, (n,), optional
         Scattering lengths in fm. Defaults to neutron values.
 
@@ -164,10 +181,10 @@ def pair_terms_from_covariance(sites, R, C, thermal=True, b=None):
 
 
 def thermal_laue_terms(sites, b=None):
-    """
+    r"""
     Incoherent thermal Laue terms of uncorrelated Gaussian motion.
 
-    Adds ``x_i b_i^2 (1 - exp(-2 W_i))`` per position, the self-term
+    Adds :math:`x_i b_i^2 (1 - e^{-2 W_i})` per position, the self-term
     remainder of independent displacements. Correlated thermal diffuse
     scattering (phonons) is not described.
 
