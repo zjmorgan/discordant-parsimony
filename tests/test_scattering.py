@@ -76,11 +76,11 @@ def test_bin_average_is_exact_for_point_terms(setup):
     R, C = covariance_from_configurations(occupation, 1)
     terms = pair_terms_from_covariance(sites, R, C, thermal=False)
     widths = np.array([0.25, 0.2, 0.3])
-    centres = np.array([[1.0, -0.5, 2.25], [0.3, 0.7, -1.1]])
+    centers = np.array([[1.0, -0.5, 2.25], [0.3, 0.7, -1.1]])
     k = 12
     u = (np.arange(k) + 0.5) / k - 0.5
     sub = np.stack(np.meshgrid(u, u, u, indexing="ij"), -1).reshape(-1, 3)
-    for c in centres:
+    for c in centers:
         numeric = evaluate(c + sub * widths, terms, structure).mean()
         exact = evaluate(c, terms.bin_average(widths), structure)
         assert np.isclose(numeric, exact, rtol=2e-3)

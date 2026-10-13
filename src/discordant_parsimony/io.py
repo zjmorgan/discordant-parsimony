@@ -66,7 +66,7 @@ class Volume:
 
     def hkl(self, index):
         """
-        Miller indices of bin centres.
+        Miller indices of bin centers.
 
         Parameters
         ----------
@@ -131,11 +131,11 @@ def load_mdhisto(filename):
 
 def reduce_volume(data, norm, background_data, background_norm, scale=1.0):
     """
-    Normalised, background-subtracted volume.
+    Normalized, background-subtracted volume.
 
     Computes ``data/norm - scale * background_data/background_norm``
     with uncorrelated error propagation. Bins with non-positive
-    normalisation are ``nan``.
+    normalization are ``nan``.
 
     Parameters
     ----------

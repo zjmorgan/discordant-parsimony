@@ -9,7 +9,7 @@ Every nuclear diffuse model is reduced to terms
     \exp\left(-\tfrac{1}{2} \mathbf{Q}^\mathsf{T} U_p \mathbf{Q}\right),
 
 equivalently a 3D-:math:`\Delta`\ PDF made of Gaussians of weight
-:math:`w_p` and covariance :math:`U_p` centred on pair vectors
+:math:`w_p` and covariance :math:`U_p` centered on pair vectors
 :math:`\mathbf{d}_p`. Occupational disorder on split sites gives
 :math:`w = b_i b_j C_{ij}(\mathbf{R})` at
 :math:`\mathbf{d} = \mathbf{R} + \mathbf{x}_j - \mathbf{x}_i` with

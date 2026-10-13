@@ -31,7 +31,7 @@ The cell holds 188 positions, 112 of them partially occupied. They form
 
 - 32 Tb2/Sn1 lines along :math:`\langle 111 \rangle`: each line holds
   either Tb2 or Sn1, 1.09 Å apart.
-- 8 Sn2 cages around 8c: one Sn2 in one of six off-centre positions,
+- 8 Sn2 cages around 8c: one Sn2 in one of six off-center positions,
   0.71 and 1.01 Å apart.
 
 Two contacts between clusters are far shorter than chemically
@@ -74,7 +74,7 @@ holds Sn1 on one tetrahedron of corners and Tb2 on the other, an Ising
 pseudospin. Every 8c cage is surrounded by a tetrahedron of cubes, and
 its single Sn2 fits only between two cubes that present Sn1. Counting
 then forces exactly two Sn-facing cubes around every cage, a 2:2 rule
-on every fcc tetrahedron (the ground state of the nearest-neighbour fcc
+on every fcc tetrahedron (the ground state of the nearest-neighbor fcc
 Ising antiferromagnet). The rule has no free parameters and reproduces
 the stepped diffuse streaks of the (*h*, *k*, 1) plane and the signs of
 the main features of the measured 3D-:math:`\Delta`\ PDF
@@ -150,7 +150,7 @@ none (independent clusters)  4           7.77                0.144
 The Tb2/Sn1 lines carry most of the correlated signal, and the Sn2
 cages add a smaller, consistent improvement on held-out data. The fit
 is not yet at the noise level (:math:`\chi^2_\nu \approx 5.5`).
-Systematic contributions not modelled here, such as the Tb\ :sup:`3+`
+Systematic contributions not modeled here, such as the Tb\ :sup:`3+`
 paramagnetic :math:`f^2(Q)` background, thermal diffuse scattering,
 Bragg tails beyond the mask, and correlations beyond 14 Å, mean the
 formal significance is overstated. The ranking is a first result, not a

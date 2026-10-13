@@ -59,8 +59,8 @@ def is_allowed(h, structure, tol=1e-6):
     h = np.asarray(h, dtype=float)
     integer = np.all(np.abs(h - np.rint(h)) < tol, axis=-1)
     phase = h @ centering_vectors(structure).T
-    centred = np.all(np.abs(phase - np.rint(phase)) < tol, axis=-1)
-    return integer & centred
+    centered = np.all(np.abs(phase - np.rint(phase)) < tol, axis=-1)
+    return integer & centered
 
 
 def laue_operators(structure):
@@ -208,9 +208,9 @@ def line_mask(h, structure, k, direction, radius):
     return mask
 
 
-def asymmetric_unit(index, shape, centre, structure):
+def asymmetric_unit(index, shape, center, structure):
     """
-    Representatives of Laue orbits on a centred regular grid.
+    Representatives of Laue orbits on a centered regular grid.
 
     Parameters
     ----------
@@ -218,7 +218,7 @@ def asymmetric_unit(index, shape, centre, structure):
         Grid indices of candidate positions.
     shape : tuple of int
         Grid shape.
-    centre : tuple of int
+    center : tuple of int
         Index of h = 0 along each axis; the grid must be symmetric about
         it with equal steps along h, k, l so that Laue images of grid
         points are grid points.
@@ -232,11 +232,11 @@ def asymmetric_unit(index, shape, centre, structure):
 
     """
 
-    n = np.stack(index, -1) - np.asarray(centre)
+    n = np.stack(index, -1) - np.asarray(center)
     size = np.asarray(shape)
 
     def encode(m):
-        c = m + np.asarray(centre)
+        c = m + np.asarray(center)
         if np.any((c < 0) | (c >= size)):
             raise ValueError("Grid is not closed under the Laue group")
         return (c[:, 0] * size[1] + c[:, 1]) * size[2] + c[:, 2]
@@ -329,8 +329,8 @@ def select(
     valid = np.isfinite(volume.signal) & (volume.sigma > 0)
     index = np.nonzero(valid)
     if symmetrized:
-        centre = tuple(int(np.argmin(np.abs(c))) for c in volume.centers)
-        keep = asymmetric_unit(index, volume.signal.shape, centre, structure)
+        center = tuple(int(np.argmin(np.abs(c))) for c in volume.centers)
+        keep = asymmetric_unit(index, volume.signal.shape, center, structure)
         index = tuple(i[keep] for i in index)
 
     h = volume.hkl(index)

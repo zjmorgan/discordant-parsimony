@@ -39,17 +39,17 @@ clusters = find_clusters(structure, active, 1.2)
 limits = {("Sn", "Sn"): 2.6, ("Sn", "Tb"): 2.8, ("Tb", "Tb"): 3.0}
 forbidden = forbidden_contacts(structure, active, clusters, limits)
 
-# pseudospin geometry of the Tb2/Sn1 lines: nearest 4b cube centre and
+# pseudospin geometry of the Tb2/Sn1 lines: nearest 4b cube center and
 # the parity of the corner the position points to
 cubes = np.array([(0.5, 0.5, 0.5), (0, 0, 0.5), (0, 0.5, 0), (0.5, 0, 0)])
 shifts = np.array(list(itertools.product((-1, 0, 1), repeat=3)))
-centres = (cubes[:, None] + shifts[None]).reshape(-1, 3)
+centers = (cubes[:, None] + shifts[None]).reshape(-1, 3)
 line = np.isin(active.label, ["Tb2", "Sn1"])
-centre = np.zeros((len(active), 3))
+center = np.zeros((len(active), 3))
 parity = np.zeros(len(active), int)
 for p in np.flatnonzero(line):
-    c = centres[np.argmin(structure.distance(centres - active.x[p]))]
-    centre[p] = c
+    c = centers[np.argmin(structure.distance(centers - active.x[p]))]
+    center[p] = c
     parity[p] = np.prod(np.sign(active.x[p] - c))
 is_tb2 = active.label == "Tb2"
 is_sn2 = active.label == "Sn2"
@@ -63,7 +63,7 @@ def configuration(rng, alpha, beta):
     g = rng.choice((-1, 1), size=2 * L)
     occ = np.zeros(R.shape[:3] + (len(active),))
     for p in np.flatnonzero(line):
-        n = np.rint(2 * (R + centre[p])).astype(int)
+        n = np.rint(2 * (R + center[p])).astype(int)
         sigma = (-1) ** n[..., alpha] * g[n[..., beta] % (2 * L)]
         tb_here = parity[p] == sigma
         occ[..., p] = tb_here if is_tb2[p] else ~tb_here

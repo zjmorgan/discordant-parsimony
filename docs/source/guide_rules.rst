@@ -19,7 +19,7 @@ are the partially occupied (or substituted) sites,
 Split-site clusters
 -------------------
 Positions closer than a cluster distance are alternatives: an atom and
-its split partners, two species sharing a line, or several off-centre
+its split partners, two species sharing a line, or several off-center
 positions in a cage. :func:`~discordant_parsimony.rules.find_clusters`
 groups them, checks that each group is a clique whose occupancies sum to
 at most one, and records the vacancy probability. Coincident positions
