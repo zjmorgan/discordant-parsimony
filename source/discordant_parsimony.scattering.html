@@ -40,6 +40,7 @@
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'source/discordant_parsimony.scattering';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -415,11 +416,15 @@ backend is the float64 reference; a CuPy backend is planned.</p>
 <p>CPU reference evaluation of pair-term intensities (float64).</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.scattering.numpy_backend.design_matrix">
-<span class="sig-name descname"><span class="pre">design_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L88-L152"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.design_matrix" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">design_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L94-L165"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.design_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Intensity per unit covariance of each pair orbit.</p>
-<p>Column <code class="docutils literal notranslate"><span class="pre">k</span></code> is <code class="docutils literal notranslate"><span class="pre">A_k(Q)</span> <span class="pre">=</span> <span class="pre">sum_{p</span> <span class="pre">in</span> <span class="pre">orbit</span> <span class="pre">k}</span> <span class="pre">b_i</span> <span class="pre">b_j</span>
-<span class="pre">exp(-W_i</span> <span class="pre">-</span> <span class="pre">W_j)</span> <span class="pre">cos(2</span> <span class="pre">pi</span> <span class="pre">h</span> <span class="pre">.</span> <span class="pre">d_p)</span> <span class="pre">prod_a</span> <span class="pre">sinc(dh_a</span> <span class="pre">d_a)</span></code>, so that
-<code class="docutils literal notranslate"><span class="pre">I</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">&#64;</span> <span class="pre">c</span></code> for orbit coefficients <code class="docutils literal notranslate"><span class="pre">c</span></code>.</p>
+<p>Column <span class="math notranslate nohighlight">\(k\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[A_k(\mathbf{Q}) = \sum_{p \in k} b_i b_j\, e^{-W_i - W_j}
+\cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)
+\prod_a \operatorname{sinc}(\Delta h_a d_{p,a}),\]</div>
+<p>so that <span class="math notranslate nohighlight">\(I = A \mathbf{c}\)</span> for orbit coefficients
+<span class="math notranslate nohighlight">\(\mathbf{c}\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -451,10 +456,13 @@ backend is the float64 reference; a CuPy backend is planned.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.scattering.numpy_backend.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L29-L85"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.evaluate" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L29-L91"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.evaluate" title="Link to this definition">#</a></dt>
 <dd><p>Diffuse intensity of pair terms at arbitrary reciprocal positions.</p>
-<p>Computes <code class="docutils literal notranslate"><span class="pre">I</span> <span class="pre">=</span> <span class="pre">sum_p</span> <span class="pre">w_p</span> <span class="pre">cos(2</span> <span class="pre">pi</span> <span class="pre">h</span> <span class="pre">.</span> <span class="pre">d_p)</span> <span class="pre">exp(-Q^T</span> <span class="pre">U_p</span> <span class="pre">Q</span> <span class="pre">/</span> <span class="pre">2)</span></code> by
-direct summation in tiles of at most <code class="docutils literal notranslate"><span class="pre">max_elements</span></code> Q-term
+<p>Computes</p>
+<div class="math notranslate nohighlight">
+\[I(\mathbf{Q}) = \sum_p w_p \cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)
+\exp\left(-\tfrac{1}{2} \mathbf{Q}^\mathsf{T} U_p \mathbf{Q}\right)\]</div>
+<p>by direct summation in tiles of at most <code class="docutils literal notranslate"><span class="pre">max_elements</span></code> Q-term
 products, never forming the full Q-by-terms matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -474,7 +482,7 @@ reversal closed.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>I</strong><span class="classifier">ndarray, (…)</span></dt><dd><p>Intensity in fm^2 per unit cell.</p>
+<dt><strong>I</strong><span class="classifier">ndarray, (…)</span></dt><dd><p>Intensity in <span class="math notranslate nohighlight">\(\mathrm{fm}^2\)</span> per unit cell.</p>
 </dd>
 </dl>
 </dd>

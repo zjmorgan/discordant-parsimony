@@ -450,17 +450,23 @@ histogram-bin averaging</p></li>
 <p>Average crystal structure: lattice, symmetry, and atomic sites.</p>
 <section id="conventions">
 <h3>Conventions<a class="headerlink" href="#conventions" title="Link to this heading">#</a></h3>
-<p>Fractional coordinates <code class="docutils literal notranslate"><span class="pre">x</span></code> and Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> (r.l.u.) refer to
-the cell given in the CIF. Direct basis vectors are the columns of <code class="docutils literal notranslate"><span class="pre">A</span></code>
-(Cartesian, Angstrom), with <code class="docutils literal notranslate"><span class="pre">a</span></code> along Cartesian x and <code class="docutils literal notranslate"><span class="pre">b</span></code> in the xy
-plane. Reciprocal basis vectors (without the 2*pi) are the columns of
-<code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">=</span> <span class="pre">inv(A).T</span></code>, so that <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">2*pi</span> <span class="pre">*</span> <span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">h</span></code> (inverse Angstrom) and
-<code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">.</span> <span class="pre">(A</span> <span class="pre">&#64;</span> <span class="pre">x)</span> <span class="pre">=</span> <span class="pre">2*pi</span> <span class="pre">*</span> <span class="pre">h</span> <span class="pre">.</span> <span class="pre">x</span></code>. Displacement parameters <code class="docutils literal notranslate"><span class="pre">U</span></code> are stored
-as Cartesian covariance tensors in Angstrom^2.</p>
+<p>Fractional coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and Miller indices
+<span class="math notranslate nohighlight">\(\mathbf{h}\)</span> (r.l.u.) refer to the cell given in the CIF. Direct
+basis vectors are the columns of <span class="math notranslate nohighlight">\(A\)</span> (Cartesian,
+<span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}\)</span>), with <span class="math notranslate nohighlight">\(\mathbf{a}\)</span> along Cartesian
+<span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(\mathbf{b}\)</span> in the <span class="math notranslate nohighlight">\(xy\)</span> plane. Reciprocal
+basis vectors (without the <span class="math notranslate nohighlight">\(2\pi\)</span>) are the columns of
+<span class="math notranslate nohighlight">\(B = (A^{-1})^\mathsf{T}\)</span>, so that</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{Q} = 2\pi B \mathbf{h}, \qquad
+\mathbf{Q} \cdot (A \mathbf{x}) = 2\pi\, \mathbf{h} \cdot \mathbf{x},\]</div>
+<p>with <span class="math notranslate nohighlight">\(\mathbf{Q}\)</span> in <span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}^{-1}\)</span>.
+Displacement parameters <span class="math notranslate nohighlight">\(U\)</span> are stored as Cartesian covariance
+tensors in <span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}^2\)</span>.</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Sites">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occupancy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L94-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Sites" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occupancy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L103-L173"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Sites" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Atomic positions in one unit cell.</p>
 <dl class="field-list simple">
@@ -474,7 +480,7 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 </dd>
 <dt><strong>x</strong><span class="classifier">ndarray, (n, 3)</span></dt><dd><p>Fractional coordinates in [0, 1).</p>
 </dd>
-<dt><strong>U</strong><span class="classifier">ndarray, (n, 3, 3)</span></dt><dd><p>Cartesian displacement covariance in Angstrom^2.</p>
+<dt><strong>U</strong><span class="classifier">ndarray, (n, 3, 3)</span></dt><dd><p>Cartesian displacement covariance in <span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}^2\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -502,13 +508,13 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Sites.partial">
-<span class="sig-name descname"><span class="pre">partial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L151-L155"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Sites.partial" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">partial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L160-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Sites.partial" title="Link to this definition">#</a></dt>
 <dd><p>Labels of sites with occupancy below one.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Sites.select">
-<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L123-L149"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Sites.select" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L132-L158"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Sites.select" title="Link to this definition">#</a></dt>
 <dd><p>Positions belonging to the given asymmetric-unit labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -540,7 +546,7 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Structure">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asymmetric</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L167-L334"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asymmetric</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L176-L343"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Average crystal structure from a CIF.</p>
 <dl class="field-list simple">
@@ -558,7 +564,7 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Structure.Q">
-<span class="sig-name descname"><span class="pre">Q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L313-L329"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.Q" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">Q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L322-L338"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.Q" title="Link to this definition">#</a></dt>
 <dd><p>Cartesian scattering vectors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -578,13 +584,13 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Structure.distance">
-<span class="sig-name descname"><span class="pre">distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L331-L334"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.distance" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L340-L343"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.distance" title="Link to this definition">#</a></dt>
 <dd><p>Length in Angstrom of fractional separation vectors.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Structure.from_cif">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_cif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L191-L270"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.from_cif" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_cif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L200-L279"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.from_cif" title="Link to this definition">#</a></dt>
 <dd><p>Read the average structure from a CIF file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -605,7 +611,7 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.Structure.sites">
-<span class="sig-name descname"><span class="pre">sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L272-L311"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.sites" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L281-L320"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.Structure.sites" title="Link to this definition">#</a></dt>
 <dd><p>Expand the asymmetric unit to all positions in one unit cell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -626,7 +632,7 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.lattice_vectors">
-<span class="sig-name descname"><span class="pre">lattice_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L63-L91"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.lattice_vectors" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">lattice_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L72-L100"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.lattice_vectors" title="Link to this definition">#</a></dt>
 <dd><p>Direct lattice vectors as matrix columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -648,7 +654,7 @@ as Cartesian covariance tensors in Angstrom^2.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.structure.parse_symop">
-<span class="sig-name descname"><span class="pre">parse_symop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L29-L60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.parse_symop" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">parse_symop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/structure.py#L38-L69"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.structure.parse_symop" title="Link to this definition">#</a></dt>
 <dd><p>Parse a symmetry operator such as <code class="docutils literal notranslate"><span class="pre">&quot;-x+1/2,</span> <span class="pre">y,</span> <span class="pre">z+1/2&quot;</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -683,7 +689,7 @@ than a physically allowed distance, which cannot both be occupied.</p></li>
 </ul>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.Cluster">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offsets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vacancy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L112-L133"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Cluster" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offsets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vacancy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L113-L134"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Cluster" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Split-site cluster: alternative positions, at most one occupied.</p>
 <dl class="field-list simple">
@@ -717,7 +723,7 @@ than a physically allowed distance, which cannot both be occupied.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.Contacts">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L19-L75"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Contacts" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L19-L76"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Contacts" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Directed contacts <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">-&gt;</span> <span class="pre">j</span></code> at cell translation <code class="docutils literal notranslate"><span class="pre">R</span></code>.</p>
 <dl class="field-list simple">
@@ -727,7 +733,8 @@ than a physically allowed distance, which cannot both be occupied.</p></li>
 </dd>
 <dt><strong>R</strong><span class="classifier">ndarray of int, (m, 3)</span></dt><dd><p>Cell translation of <code class="docutils literal notranslate"><span class="pre">j</span></code> relative to <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p>
 </dd>
-<dt><strong>distance</strong><span class="classifier">ndarray, (m,)</span></dt><dd><p>Separation <code class="docutils literal notranslate"><span class="pre">|A</span> <span class="pre">(R</span> <span class="pre">+</span> <span class="pre">x_j</span> <span class="pre">-</span> <span class="pre">x_i)|</span></code> in Angstrom.</p>
+<dt><strong>distance</strong><span class="classifier">ndarray, (m,)</span></dt><dd><p>Separation <span class="math notranslate nohighlight">\(|A (\mathbf{R} + \mathbf{x}_j - \mathbf{x}_i)|\)</span>
+in <span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -754,12 +761,12 @@ than a physically allowed distance, which cannot both be occupied.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.Contacts.subset">
-<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L43-L46"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Contacts.subset" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L44-L47"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Contacts.subset" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.Contacts.summary">
-<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L48-L75"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Contacts.summary" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L49-L76"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.Contacts.summary" title="Link to this definition">#</a></dt>
 <dd><p>Count contacts by label pair and distance, per position.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -783,7 +790,7 @@ than a physically allowed distance, which cannot both be occupied.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.find_clusters">
-<span class="sig-name descname"><span class="pre">find_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L136-L198"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.find_clusters" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">find_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L137-L199"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.find_clusters" title="Link to this definition">#</a></dt>
 <dd><p>Group positions into mutually exclusive split-site clusters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -816,7 +823,7 @@ occupancies sum to more than one.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.find_contacts">
-<span class="sig-name descname"><span class="pre">find_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_distance</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L78-L109"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.find_contacts" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">find_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_distance</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L79-L110"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.find_contacts" title="Link to this definition">#</a></dt>
 <dd><p>All directed contacts shorter than a distance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -841,7 +848,7 @@ positions of different labels (substitution) are contacts.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.rules.forbidden_contacts">
-<span class="sig-name descname"><span class="pre">forbidden_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_distance</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L201-L246"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.forbidden_contacts" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">forbidden_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_distance</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/rules.py#L202-L247"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.rules.forbidden_contacts" title="Link to this definition">#</a></dt>
 <dd><p>Contacts between different clusters that are too short to coexist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -870,17 +877,22 @@ mapping from sorted species pairs, e.g. <code class="docutils literal notranslat
 <section id="module-discordant_parsimony.symmetry">
 <span id="discordant-parsimony-symmetry-module"></span><h2>discordant_parsimony.symmetry module<a class="headerlink" href="#module-discordant_parsimony.symmetry" title="Link to this heading">#</a></h2>
 <p>Symmetry-independent pair correlations.</p>
-<p>A pair <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j,</span> <span class="pre">R)</span></code> joins position <code class="docutils literal notranslate"><span class="pre">i</span></code> in the origin cell to position
-<code class="docutils literal notranslate"><span class="pre">j</span></code> in cell <code class="docutils literal notranslate"><span class="pre">R</span></code>. A space-group operator <code class="docutils literal notranslate"><span class="pre">(W,</span> <span class="pre">t)</span></code> maps it to
-<code class="docutils literal notranslate"><span class="pre">(i',</span> <span class="pre">j',</span> <span class="pre">R')</span></code> with <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">x_i</span> <span class="pre">+</span> <span class="pre">t</span> <span class="pre">=</span> <span class="pre">x_i'</span> <span class="pre">+</span> <span class="pre">L_i</span></code>, <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">x_j</span> <span class="pre">+</span> <span class="pre">t</span> <span class="pre">=</span> <span class="pre">x_j'</span> <span class="pre">+</span>
-<span class="pre">L_j</span></code> and <code class="docutils literal notranslate"><span class="pre">R'</span> <span class="pre">=</span> <span class="pre">W</span> <span class="pre">R</span> <span class="pre">+</span> <span class="pre">L_j</span> <span class="pre">-</span> <span class="pre">L_i</span></code>; pair reversal maps it to
-<code class="docutils literal notranslate"><span class="pre">(j,</span> <span class="pre">i,</span> <span class="pre">-R)</span></code>. Correlations with the full symmetry of the average
-structure are equal on each orbit, so one coefficient per orbit
+<p>A pair <span class="math notranslate nohighlight">\((i, j, \mathbf{R})\)</span> joins position <span class="math notranslate nohighlight">\(i\)</span> in the
+origin cell to position <span class="math notranslate nohighlight">\(j\)</span> in cell <span class="math notranslate nohighlight">\(\mathbf{R}\)</span>. A
+space-group operator <span class="math notranslate nohighlight">\((W, \mathbf{t})\)</span> maps it to
+<span class="math notranslate nohighlight">\((i', j', \mathbf{R}')\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[W \mathbf{x}_i + \mathbf{t} = \mathbf{x}_{i'} + \mathbf{L}_i, \quad
+W \mathbf{x}_j + \mathbf{t} = \mathbf{x}_{j'} + \mathbf{L}_j, \quad
+\mathbf{R}' = W \mathbf{R} + \mathbf{L}_j - \mathbf{L}_i;\]</div>
+<p>pair reversal maps it to <span class="math notranslate nohighlight">\((j, i, -\mathbf{R})\)</span>. Correlations with
+the full symmetry of the average structure are equal on each orbit, so
+one coefficient per orbit
 describes them. Pairs are selected with a distance cutoff, which is
 invariant under the group.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.PairOrbits">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">PairOrbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L56-L95"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.PairOrbits" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">PairOrbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L65-L105"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.PairOrbits" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Pairs within a cutoff, grouped into symmetry orbits.</p>
 <dl class="field-list simple">
@@ -890,7 +902,8 @@ invariant under the group.</p>
 </dd>
 <dt><strong>R</strong><span class="classifier">ndarray of int, (m, 3)</span></dt><dd><p>Cell translation of <code class="docutils literal notranslate"><span class="pre">j</span></code>.</p>
 </dd>
-<dt><strong>d</strong><span class="classifier">ndarray, (m, 3)</span></dt><dd><p>Pair vectors <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">+</span> <span class="pre">x_j</span> <span class="pre">-</span> <span class="pre">x_i</span></code> (fractional).</p>
+<dt><strong>d</strong><span class="classifier">ndarray, (m, 3)</span></dt><dd><p>Pair vectors <span class="math notranslate nohighlight">\(\mathbf{R} + \mathbf{x}_j - \mathbf{x}_i\)</span>
+(fractional).</p>
 </dd>
 <dt><strong>orbit</strong><span class="classifier">ndarray of int, (m,)</span></dt><dd><p>Orbit index of each pair, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">..</span> <span class="pre">n_orbits</span> <span class="pre">-</span> <span class="pre">1</span></code>, ordered by
 pair distance.</p>
@@ -937,7 +950,7 @@ pair distance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.PairOrbits.representatives">
-<span class="sig-name descname"><span class="pre">representatives</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L91-L95"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.PairOrbits.representatives" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">representatives</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L101-L105"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.PairOrbits.representatives" title="Link to this definition">#</a></dt>
 <dd><p>Index of the first pair of each orbit.</p>
 </dd></dl>
 
@@ -945,7 +958,7 @@ pair distance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.orbit_average">
-<span class="sig-name descname"><span class="pre">orbit_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L167-L199"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.orbit_average" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">orbit_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L177-L210"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.orbit_average" title="Link to this definition">#</a></dt>
 <dd><p>Project a covariance onto orbit coefficients (symmetrize).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -954,7 +967,8 @@ pair distance.</p>
 </dd>
 <dt><strong>R</strong><span class="classifier">ndarray of int, (k, 3)</span></dt><dd><p>Translations of the covariance array.</p>
 </dd>
-<dt><strong>C</strong><span class="classifier">ndarray, (k, n, n)</span></dt><dd><p>Covariance <code class="docutils literal notranslate"><span class="pre">C[k,</span> <span class="pre">i,</span> <span class="pre">j]</span> <span class="pre">=</span> <span class="pre">&lt;dn_i(0)</span> <span class="pre">dn_j(R_k)&gt;</span></code>.</p>
+<dt><strong>C</strong><span class="classifier">ndarray, (k, n, n)</span></dt><dd><p>Covariance <code class="docutils literal notranslate"><span class="pre">C[k,</span> <span class="pre">i,</span> <span class="pre">j]</span></code> <span class="math notranslate nohighlight">\(= \langle \delta n_i(\mathbf{0})\,
+\delta n_j(\mathbf{R}_k) \rangle\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -969,7 +983,7 @@ pair distance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.orbit_pair_terms">
-<span class="sig-name descname"><span class="pre">orbit_pair_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L202-L230"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.orbit_pair_terms" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">orbit_pair_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L213-L241"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.orbit_pair_terms" title="Link to this definition">#</a></dt>
 <dd><p>Pair terms of one covariance coefficient per orbit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -980,7 +994,7 @@ pair distance.</p>
 </dd>
 <dt><strong>c</strong><span class="classifier">array_like, (n_orbits,)</span></dt><dd><p>Occupation covariance of each orbit.</p>
 </dd>
-<dt><strong>thermal</strong><span class="classifier">bool, optional</span></dt><dd><p>Smear by <code class="docutils literal notranslate"><span class="pre">U_i</span> <span class="pre">+</span> <span class="pre">U_j</span></code>.</p>
+<dt><strong>thermal</strong><span class="classifier">bool, optional</span></dt><dd><p>Smear by <span class="math notranslate nohighlight">\(U_i + U_j\)</span>.</p>
 </dd>
 <dt><strong>b</strong><span class="classifier">array_like, (n,), optional</span></dt><dd><p>Scattering lengths in fm. Defaults to neutron values.</p>
 </dd>
@@ -996,7 +1010,7 @@ pair distance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.pair_orbits">
-<span class="sig-name descname"><span class="pre">pair_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L98-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.pair_orbits" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">pair_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L108-L174"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.pair_orbits" title="Link to this definition">#</a></dt>
 <dd><p>All pairs up to a distance, grouped into symmetry orbits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1021,7 +1035,7 @@ pair distance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.position_permutations">
-<span class="sig-name descname"><span class="pre">position_permutations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L18-L53"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.position_permutations" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">position_permutations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L26-L62"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.position_permutations" title="Link to this definition">#</a></dt>
 <dd><p>Action of each operator on the positions of one cell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1038,7 +1052,8 @@ pair distance.</p>
 <dd class="field-even"><dl class="simple">
 <dt><strong>perm</strong><span class="classifier">ndarray of int, (g, n)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">perm[g,</span> <span class="pre">i]</span></code> is the image position of <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p>
 </dd>
-<dt><strong>shift</strong><span class="classifier">ndarray of int, (g, n, 3)</span></dt><dd><p>Lattice vector with <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">x_i</span> <span class="pre">+</span> <span class="pre">t</span> <span class="pre">=</span> <span class="pre">x_perm</span> <span class="pre">+</span> <span class="pre">shift</span></code>.</p>
+<dt><strong>shift</strong><span class="classifier">ndarray of int, (g, n, 3)</span></dt><dd><p>Lattice vector with <span class="math notranslate nohighlight">\(W \mathbf{x}_i + \mathbf{t} =
+\mathbf{x}_{\mathrm{perm}} + \mathbf{L}\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -1048,14 +1063,17 @@ pair distance.</p>
 </section>
 <section id="module-discordant_parsimony.correlations">
 <span id="discordant-parsimony-correlations-module"></span><h2>discordant_parsimony.correlations module<a class="headerlink" href="#module-discordant_parsimony.correlations" title="Link to this heading">#</a></h2>
-<p>Occupation covariances <code class="docutils literal notranslate"><span class="pre">C_ij(R)</span> <span class="pre">=</span> <span class="pre">&lt;dn_i(0)</span> <span class="pre">dn_j(R)&gt;</span></code>.</p>
+<p>Occupation covariances.</p>
+<div class="math notranslate nohighlight">
+\[C_{ij}(\mathbf{R}) = \langle \delta n_i(\mathbf{0})\,
+\delta n_j(\mathbf{R}) \rangle, \qquad \delta n = n - \langle n \rangle.\]</div>
 <p>Covariances may come from an analytic model or be estimated from
 occupation configurations of a periodic lattice of cells. Only the
 participating positions are represented; this is not an atomistic
 supercell of the full structure.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.correlations.covariance_from_configurations">
-<span class="sig-name descname"><span class="pre">covariance_from_configurations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L32-L75"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.covariance_from_configurations" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">covariance_from_configurations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L38-L82"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.covariance_from_configurations" title="Link to this definition">#</a></dt>
 <dd><p>Estimate occupation covariances from periodic configurations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1075,7 +1093,8 @@ default.</p>
 <dd class="field-even"><dl class="simple">
 <dt><strong>R</strong><span class="classifier">ndarray of int, (k, 3)</span></dt><dd><p>Cell translations.</p>
 </dd>
-<dt><strong>C</strong><span class="classifier">ndarray, (k, n, n)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">C[k,</span> <span class="pre">i,</span> <span class="pre">j]</span> <span class="pre">=</span> <span class="pre">&lt;dn_i(0)</span> <span class="pre">dn_j(R_k)&gt;</span></code> averaged over cells and
+<dt><strong>C</strong><span class="classifier">ndarray, (k, n, n)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">C[k,</span> <span class="pre">i,</span> <span class="pre">j]</span></code> <span class="math notranslate nohighlight">\(= \langle \delta n_i(\mathbf{0})\,
+\delta n_j(\mathbf{R}_k) \rangle\)</span> averaged over cells and
 configurations.</p>
 </dd>
 </dl>
@@ -1085,10 +1104,10 @@ configurations.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.correlations.fixed_cluster_orbits">
-<span class="sig-name descname"><span class="pre">fixed_cluster_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L121-L170"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.fixed_cluster_orbits" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">fixed_cluster_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L128-L177"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.fixed_cluster_orbits" title="Link to this definition">#</a></dt>
 <dd><p>Orbit coefficients fixed exactly by the average structure.</p>
 <p>Pairs inside one split-site cluster (including self pairs) have
-<code class="docutils literal notranslate"><span class="pre">C_ab</span> <span class="pre">=</span> <span class="pre">x_a</span> <span class="pre">delta_ab</span> <span class="pre">-</span> <span class="pre">x_a</span> <span class="pre">x_b</span></code>, independent of any local order.</p>
+<span class="math notranslate nohighlight">\(C_{ab} = x_a \delta_{ab} - x_a x_b\)</span>, independent of any local order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1113,10 +1132,10 @@ configurations.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.correlations.independent_cluster_covariance">
-<span class="sig-name descname"><span class="pre">independent_cluster_covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L78-L118"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.independent_cluster_covariance" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">independent_cluster_covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L85-L125"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.independent_cluster_covariance" title="Link to this definition">#</a></dt>
 <dd><p>Covariance of independent split-site clusters (no local order).</p>
 <p>Within a cluster at most one member is occupied, so
-<code class="docutils literal notranslate"><span class="pre">C_ab</span> <span class="pre">=</span> <span class="pre">x_a</span> <span class="pre">delta_ab</span> <span class="pre">-</span> <span class="pre">x_a</span> <span class="pre">x_b</span></code>; different clusters are
+<span class="math notranslate nohighlight">\(C_{ab} = x_a \delta_{ab} - x_a x_b\)</span>; different clusters are
 uncorrelated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1140,7 +1159,7 @@ uncorrelated.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.correlations.translations">
-<span class="sig-name descname"><span class="pre">translations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_offset</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L12-L29"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.translations" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">translations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_offset</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/correlations.py#L18-L35"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.correlations.translations" title="Link to this definition">#</a></dt>
 <dd><p>Cell translations with <code class="docutils literal notranslate"><span class="pre">|R_a|</span> <span class="pre">&lt;=</span> <span class="pre">max_offset</span></code> along each axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1167,19 +1186,21 @@ local order:</p>
 <li><p>sum rules: a split-site cluster without vacancies always holds exactly
 one atom, so the fluctuations of its members sum to zero and their
 covariances with any position sum to zero,
-<code class="docutils literal notranslate"><span class="pre">sum_a</span> <span class="pre">C(a</span> <span class="pre">&#64;</span> <span class="pre">o_a,</span> <span class="pre">j</span> <span class="pre">&#64;</span> <span class="pre">R)</span> <span class="pre">=</span> <span class="pre">0</span></code>;</p></li>
+<span class="math notranslate nohighlight">\(\sum_a C(a \,&#64;\, \mathbf{o}_a,\, j \,&#64;\, \mathbf{R}) = 0\)</span>;</p></li>
 <li><p>homometric ties: orbits whose pair vectors, scattering-length products
 and displacement tensors coincide give identical intensities, so only
 their sum is measurable; they are tied equal (each then carries the
 average of the group).</p></li>
 </ul>
 <p>Together with coefficients fixed by the average structure they define
-<code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">c0</span> <span class="pre">+</span> <span class="pre">N</span> <span class="pre">theta</span></code> with free parameters <code class="docutils literal notranslate"><span class="pre">theta</span></code>.</p>
+<span class="math notranslate nohighlight">\(\mathbf{c} = \mathbf{c}_0 + N \boldsymbol{\theta}\)</span> with free
+parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.constraints.Parameterization">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Parameterization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L131-L157"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.Parameterization" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Parameterization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L132-L159"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.Parameterization" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Coefficients <code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">c0</span> <span class="pre">+</span> <span class="pre">N</span> <span class="pre">theta</span></code> satisfying all constraints.</p>
+<p>Coefficients <span class="math notranslate nohighlight">\(\mathbf{c} = \mathbf{c}_0 + N \boldsymbol{\theta}\)</span>
+satisfying all constraints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1205,7 +1226,7 @@ average-structure occupancies).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.constraints.Parameterization.coefficients">
-<span class="sig-name descname"><span class="pre">coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L156-L157"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.Parameterization.coefficients" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L158-L159"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.Parameterization.coefficients" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -1222,7 +1243,7 @@ average-structure occupancies).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.constraints.homometric_groups">
-<span class="sig-name descname"><span class="pre">homometric_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L76-L113"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.homometric_groups" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">homometric_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L77-L114"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.homometric_groups" title="Link to this definition">#</a></dt>
 <dd><p>Groups of orbits that give identical intensities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1246,7 +1267,7 @@ average-structure occupancies).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.constraints.parameterize">
-<span class="sig-name descname"><span class="pre">parameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L160-L201"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.parameterize" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">parameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L162-L203"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.parameterize" title="Link to this definition">#</a></dt>
 <dd><p>Solve fixed values and linear constraints for free directions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1272,7 +1293,7 @@ values.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.constraints.sum_rule_rows">
-<span class="sig-name descname"><span class="pre">sum_rule_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vacancy_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L32-L73"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.sum_rule_rows" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sum_rule_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vacancy_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L33-L74"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.sum_rule_rows" title="Link to this definition">#</a></dt>
 <dd><p>Sum-rule constraints of clusters without vacancies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1297,7 +1318,7 @@ pairs beyond the cutoff are omitted.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.constraints.tie_rows">
-<span class="sig-name descname"><span class="pre">tie_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L116-L128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.tie_rows" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">tie_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/constraints.py#L117-L129"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.constraints.tie_rows" title="Link to this definition">#</a></dt>
 <dd><p>Rows <code class="docutils literal notranslate"><span class="pre">c_o</span> <span class="pre">-</span> <span class="pre">c_g</span> <span class="pre">=</span> <span class="pre">0</span></code> tying each orbit to its group label.</p>
 </dd></dl>
 
@@ -1305,31 +1326,36 @@ pairs beyond the cutoff are omitted.</p>
 <section id="module-discordant_parsimony.pairs">
 <span id="discordant-parsimony-pairs-module"></span><h2>discordant_parsimony.pairs module<a class="headerlink" href="#module-discordant_parsimony.pairs" title="Link to this heading">#</a></h2>
 <p>Weighted Gaussian pair terms: the common currency of all models.</p>
-<p>Every nuclear diffuse model is reduced to terms <code class="docutils literal notranslate"><span class="pre">(d,</span> <span class="pre">w,</span> <span class="pre">U)</span></code> with</p>
-<blockquote>
-<div><p>I(Q) = sum_p  w_p * exp(i Q . d_p) * exp(-Q^T U_p Q / 2),</p>
-</div></blockquote>
-<p>equivalently a 3D-delta-PDF made of Gaussians of weight <code class="docutils literal notranslate"><span class="pre">w_p</span></code> and
-covariance <code class="docutils literal notranslate"><span class="pre">U_p</span></code> centred on pair vectors <code class="docutils literal notranslate"><span class="pre">d_p</span></code>. Occupational
-disorder on split sites gives <code class="docutils literal notranslate"><span class="pre">w</span> <span class="pre">=</span> <span class="pre">b_i</span> <span class="pre">b_j</span> <span class="pre">C_ij(R)</span></code> at
-<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">R</span> <span class="pre">+</span> <span class="pre">x_j</span> <span class="pre">-</span> <span class="pre">x_i</span></code> with <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">U_i</span> <span class="pre">+</span> <span class="pre">U_j</span></code> for uncorrelated thermal
-motion. Term sets must be closed under <code class="docutils literal notranslate"><span class="pre">(d,</span> <span class="pre">w,</span> <span class="pre">U)</span> <span class="pre">-&gt;</span> <span class="pre">(-d,</span> <span class="pre">w,</span> <span class="pre">U)</span></code>,
-which holds for any covariance with <code class="docutils literal notranslate"><span class="pre">C_ij(R)</span> <span class="pre">=</span> <span class="pre">C_ji(-R)</span></code>; the
-intensity is then real.</p>
+<p>Every nuclear diffuse model is reduced to terms
+<span class="math notranslate nohighlight">\((\mathbf{d}_p, w_p, U_p)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[I(\mathbf{Q}) = \sum_p w_p \, e^{i \mathbf{Q} \cdot \mathbf{d}_p}
+\exp\left(-\tfrac{1}{2} \mathbf{Q}^\mathsf{T} U_p \mathbf{Q}\right),\]</div>
+<p>equivalently a 3D-<span class="math notranslate nohighlight">\(\Delta\)</span>PDF made of Gaussians of weight
+<span class="math notranslate nohighlight">\(w_p\)</span> and covariance <span class="math notranslate nohighlight">\(U_p\)</span> centred on pair vectors
+<span class="math notranslate nohighlight">\(\mathbf{d}_p\)</span>. Occupational disorder on split sites gives
+<span class="math notranslate nohighlight">\(w = b_i b_j C_{ij}(\mathbf{R})\)</span> at
+<span class="math notranslate nohighlight">\(\mathbf{d} = \mathbf{R} + \mathbf{x}_j - \mathbf{x}_i\)</span> with
+<span class="math notranslate nohighlight">\(U = U_i + U_j\)</span> for uncorrelated thermal motion. Term sets must
+be closed under <span class="math notranslate nohighlight">\((\mathbf{d}, w, U) \to (-\mathbf{d}, w, U)\)</span>,
+which holds for any covariance with
+<span class="math notranslate nohighlight">\(C_{ij}(\mathbf{R}) = C_{ji}(-\mathbf{R})\)</span>; the intensity is
+then real.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.PairTerms">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">PairTerms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L21-L128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">PairTerms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L28-L143"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Pair terms <code class="docutils literal notranslate"><span class="pre">(d,</span> <span class="pre">w,</span> <span class="pre">U)</span></code>.</p>
+<p>Pair terms <span class="math notranslate nohighlight">\((\mathbf{d}, w, U)\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>d</strong><span class="classifier">ndarray, (n, 3)</span></dt><dd><p>Pair vectors in fractional coordinates.</p>
 </dd>
-<dt><strong>w</strong><span class="classifier">ndarray, (n,)</span></dt><dd><p>Weights in fm^2 per unit cell.</p>
+<dt><strong>w</strong><span class="classifier">ndarray, (n,)</span></dt><dd><p>Weights in <span class="math notranslate nohighlight">\(\mathrm{fm}^2\)</span> per unit cell.</p>
 </dd>
-<dt><strong>U</strong><span class="classifier">ndarray, (n, 3, 3) or None</span></dt><dd><p>Cartesian Gaussian covariance in Angstrom^2, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for
-point (unsmeared) terms.</p>
+<dt><strong>U</strong><span class="classifier">ndarray, (n, 3, 3) or None</span></dt><dd><p>Cartesian Gaussian covariance in
+<span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}^2\)</span>, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for point
+(unsmeared) terms.</p>
 </dd>
 </dl>
 </dd>
@@ -1341,12 +1367,15 @@ point (unsmeared) terms.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.PairTerms.bin_average">
-<span class="sig-name descname"><span class="pre">bin_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widths</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L69-L90"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.bin_average" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">bin_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widths</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L77-L104"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.bin_average" title="Link to this definition">#</a></dt>
 <dd><p>Average over rectangular reciprocal-space bins.</p>
-<p>Averaging <code class="docutils literal notranslate"><span class="pre">exp(2</span> <span class="pre">pi</span> <span class="pre">i</span> <span class="pre">h</span> <span class="pre">.</span> <span class="pre">d)</span></code> over a bin of widths <code class="docutils literal notranslate"><span class="pre">dh</span></code> in
-r.l.u. multiplies each term by <code class="docutils literal notranslate"><span class="pre">prod_a</span> <span class="pre">sinc(dh_a</span> <span class="pre">d_a)</span></code>. This is
-exact for point terms and neglects the variation of the Gaussian
-factor across a bin otherwise.</p>
+<p>Averaging <span class="math notranslate nohighlight">\(e^{2\pi i \mathbf{h} \cdot \mathbf{d}}\)</span> over a bin
+of widths <span class="math notranslate nohighlight">\(\Delta h_a\)</span> in r.l.u. multiplies each term by</p>
+<div class="math notranslate nohighlight">
+\[\prod_a \operatorname{sinc}(\Delta h_a d_a), \qquad
+\operatorname{sinc}(x) = \frac{\sin \pi x}{\pi x}.\]</div>
+<p>This is exact for point terms and neglects the variation of the
+Gaussian factor across a bin otherwise.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1364,7 +1393,7 @@ factor across a bin otherwise.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.PairTerms.concatenate">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terms</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L45-L60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.concatenate" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terms</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L53-L68"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.concatenate" title="Link to this definition">#</a></dt>
 <dd><p>Join term sets; missing covariances are taken as zero.</p>
 </dd></dl>
 
@@ -1375,9 +1404,10 @@ factor across a bin otherwise.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.PairTerms.merge">
-<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L92-L128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.merge" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L106-L143"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.merge" title="Link to this definition">#</a></dt>
 <dd><p>Combine reversed and coincident terms.</p>
-<p>Each <code class="docutils literal notranslate"><span class="pre">(d,</span> <span class="pre">U)</span></code> is mapped to a canonical sign of <code class="docutils literal notranslate"><span class="pre">d</span></code> and terms
+<p>Each <span class="math notranslate nohighlight">\((\mathbf{d}, U)\)</span> is mapped to a canonical sign of
+<span class="math notranslate nohighlight">\(\mathbf{d}\)</span> and terms
 with identical keys are summed. Valid only for reversal-closed
 sets, for which the intensity is a cosine sum.</p>
 <dl class="field-list simple">
@@ -1398,8 +1428,8 @@ sets, for which the intensity is a cosine sum.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.PairTerms.prune">
-<span class="sig-name descname"><span class="pre">prune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L62-L67"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.prune" title="Link to this definition">#</a></dt>
-<dd><p>Drop terms with <code class="docutils literal notranslate"><span class="pre">|w|</span> <span class="pre">&lt;=</span> <span class="pre">tol</span></code>.</p>
+<span class="sig-name descname"><span class="pre">prune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L70-L75"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.PairTerms.prune" title="Link to this definition">#</a></dt>
+<dd><p>Drop terms with <span class="math notranslate nohighlight">\(|w| \le\)</span> <code class="docutils literal notranslate"><span class="pre">tol</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1411,7 +1441,7 @@ sets, for which the intensity is a cosine sum.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.pair_terms_from_covariance">
-<span class="sig-name descname"><span class="pre">pair_terms_from_covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L131-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.pair_terms_from_covariance" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">pair_terms_from_covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L146-L180"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.pair_terms_from_covariance" title="Link to this definition">#</a></dt>
 <dd><p>Pair terms of occupational (split-site) covariances.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1420,10 +1450,12 @@ sets, for which the intensity is a cosine sum.</p>
 </dd>
 <dt><strong>R</strong><span class="classifier">ndarray of int, (m, 3)</span></dt><dd><p>Cell translations.</p>
 </dd>
-<dt><strong>C</strong><span class="classifier">ndarray, (m, n, n)</span></dt><dd><p>Occupation covariance <code class="docutils literal notranslate"><span class="pre">C[k,</span> <span class="pre">i,</span> <span class="pre">j]</span> <span class="pre">=</span> <span class="pre">&lt;dn_i(0)</span> <span class="pre">dn_j(R_k)&gt;</span></code>.</p>
+<dt><strong>C</strong><span class="classifier">ndarray, (m, n, n)</span></dt><dd><p>Occupation covariance <code class="docutils literal notranslate"><span class="pre">C[k,</span> <span class="pre">i,</span> <span class="pre">j]</span></code>
+<span class="math notranslate nohighlight">\(= \langle \delta n_i(\mathbf{0})\,
+\delta n_j(\mathbf{R}_k) \rangle\)</span>.</p>
 </dd>
-<dt><strong>thermal</strong><span class="classifier">bool, optional</span></dt><dd><p>Smear each term by <code class="docutils literal notranslate"><span class="pre">U_i</span> <span class="pre">+</span> <span class="pre">U_j</span></code> (uncorrelated Gaussian motion,
-i.e. Debye-Waller factors <code class="docutils literal notranslate"><span class="pre">exp(-W_i</span> <span class="pre">-</span> <span class="pre">W_j)</span></code>).</p>
+<dt><strong>thermal</strong><span class="classifier">bool, optional</span></dt><dd><p>Smear each term by <span class="math notranslate nohighlight">\(U_i + U_j\)</span> (uncorrelated Gaussian
+motion, i.e. Debye-Waller factors <span class="math notranslate nohighlight">\(e^{-W_i - W_j}\)</span>).</p>
 </dd>
 <dt><strong>b</strong><span class="classifier">array_like, (n,), optional</span></dt><dd><p>Scattering lengths in fm. Defaults to neutron values.</p>
 </dd>
@@ -1439,9 +1471,9 @@ i.e. Debye-Waller factors <code class="docutils literal notranslate"><span class
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.pairs.thermal_laue_terms">
-<span class="sig-name descname"><span class="pre">thermal_laue_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L166-L192"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.thermal_laue_terms" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">thermal_laue_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/pairs.py#L183-L209"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.pairs.thermal_laue_terms" title="Link to this definition">#</a></dt>
 <dd><p>Incoherent thermal Laue terms of uncorrelated Gaussian motion.</p>
-<p>Adds <code class="docutils literal notranslate"><span class="pre">x_i</span> <span class="pre">b_i^2</span> <span class="pre">(1</span> <span class="pre">-</span> <span class="pre">exp(-2</span> <span class="pre">W_i))</span></code> per position, the self-term
+<p>Adds <span class="math notranslate nohighlight">\(x_i b_i^2 (1 - e^{-2 W_i})\)</span> per position, the self-term
 remainder of independent displacements. Correlated thermal diffuse
 scattering (phonons) is not described.</p>
 <dl class="field-list simple">
@@ -1471,15 +1503,17 @@ diffuse information:</p>
 <li><p>Bragg regions are excluded around reflections allowed by the lattice
 centering;</p></li>
 <li><p>symmetrized data are reduced to one representative per Laue orbit;</p></li>
-<li><p>diffuse features are targeted like satellites, at points <code class="docutils literal notranslate"><span class="pre">G</span> <span class="pre">+</span> <span class="pre">k</span></code> or
-along lines <code class="docutils literal notranslate"><span class="pre">G</span> <span class="pre">+</span> <span class="pre">k</span> <span class="pre">+</span> <span class="pre">t</span> <span class="pre">v</span></code> for allowed <code class="docutils literal notranslate"><span class="pre">G</span></code> and the Laue star of
-<code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">v</span></code>;</p></li>
+<li><p>diffuse features are targeted like satellites, at points
+<span class="math notranslate nohighlight">\(\mathbf{G} + \mathbf{k}\)</span> or along lines
+<span class="math notranslate nohighlight">\(\mathbf{G} + \mathbf{k} + t \mathbf{v}\)</span> for allowed
+<span class="math notranslate nohighlight">\(\mathbf{G}\)</span> and the Laue star of <span class="math notranslate nohighlight">\(\mathbf{k}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span>;</p></li>
 <li><p>a reproducible random fraction of the remaining positions samples the
 background between features.</p></li>
 </ul>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.QSelection">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">QSelection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L247-L281"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.QSelection" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">QSelection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L251-L285"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.QSelection" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Selected reciprocal-space positions.</p>
 <dl class="field-list simple">
@@ -1523,14 +1557,14 @@ background between features.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.QSelection.subset">
-<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L274-L281"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.QSelection.subset" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L278-L285"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.QSelection.subset" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.asymmetric_unit">
-<span class="sig-name descname"><span class="pre">asymmetric_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L207-L244"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.asymmetric_unit" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">asymmetric_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L211-L248"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.asymmetric_unit" title="Link to this definition">#</a></dt>
 <dd><p>Representatives of Laue orbits on a centred regular grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1558,7 +1592,7 @@ orbit among the candidates.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.bragg_mask">
-<span class="sig-name descname"><span class="pre">bragg_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L95-L114"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.bragg_mask" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">bragg_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L97-L116"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.bragg_mask" title="Link to this definition">#</a></dt>
 <dd><p>Positions within <code class="docutils literal notranslate"><span class="pre">radius</span></code> (inverse Angstrom) of allowed Bragg peaks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1580,7 +1614,7 @@ orbit among the candidates.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.canonical">
-<span class="sig-name descname"><span class="pre">canonical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L364-L392"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.canonical" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">canonical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L368-L396"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.canonical" title="Link to this definition">#</a></dt>
 <dd><p>Canonical Laue-equivalent of each position.</p>
 <p>The representative is the lexicographically largest image, so
 equivalent positions share one key regardless of grid or ordering.</p>
@@ -1604,7 +1638,7 @@ equivalent positions share one key regardless of grid or ordering.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.centering_vectors">
-<span class="sig-name descname"><span class="pre">centering_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L21-L38"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.centering_vectors" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">centering_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L23-L40"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.centering_vectors" title="Link to this definition">#</a></dt>
 <dd><p>Pure translations among the operators (lattice centering).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1618,7 +1652,7 @@ equivalent positions share one key regardless of grid or ordering.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.is_allowed">
-<span class="sig-name descname"><span class="pre">is_allowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L41-L61"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.is_allowed" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">is_allowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L43-L63"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.is_allowed" title="Link to this definition">#</a></dt>
 <dd><p>Integer reflections allowed by the lattice centering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1638,7 +1672,7 @@ equivalent positions share one key regardless of grid or ordering.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.laue_operators">
-<span class="sig-name descname"><span class="pre">laue_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L64-L77"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.laue_operators" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">laue_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L66-L79"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.laue_operators" title="Link to this definition">#</a></dt>
 <dd><p>Laue group rotations acting on Miller indices as <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">&#64;</span> <span class="pre">W</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1652,8 +1686,9 @@ equivalent positions share one key regardless of grid or ordering.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.line_mask">
-<span class="sig-name descname"><span class="pre">line_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L151-L204"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.line_mask" title="Link to this definition">#</a></dt>
-<dd><p>Positions within <code class="docutils literal notranslate"><span class="pre">radius</span></code> of lines <code class="docutils literal notranslate"><span class="pre">G</span> <span class="pre">+</span> <span class="pre">k</span> <span class="pre">+</span> <span class="pre">t</span> <span class="pre">v</span></code>.</p>
+<span class="sig-name descname"><span class="pre">line_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L154-L208"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.line_mask" title="Link to this definition">#</a></dt>
+<dd><p>Positions within <code class="docutils literal notranslate"><span class="pre">radius</span></code> of lines
+<span class="math notranslate nohighlight">\(\mathbf{G} + \mathbf{k} + t \mathbf{v}\)</span>.</p>
 <p>The Laue group is applied to <code class="docutils literal notranslate"><span class="pre">(k,</span> <span class="pre">v)</span></code> jointly, so the star of the
 line is generated. Distance is measured perpendicular to the line.</p>
 <dl class="field-list simple">
@@ -1680,8 +1715,9 @@ line is generated. Distance is measured perpendicular to the line.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.satellite_mask">
-<span class="sig-name descname"><span class="pre">satellite_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L123-L148"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.satellite_mask" title="Link to this definition">#</a></dt>
-<dd><p>Positions within <code class="docutils literal notranslate"><span class="pre">radius</span></code> of satellites <code class="docutils literal notranslate"><span class="pre">G</span> <span class="pre">+</span> <span class="pre">k</span></code> (star of <code class="docutils literal notranslate"><span class="pre">k</span></code>).</p>
+<span class="sig-name descname"><span class="pre">satellite_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L125-L151"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.satellite_mask" title="Link to this definition">#</a></dt>
+<dd><p>Positions within <code class="docutils literal notranslate"><span class="pre">radius</span></code> of satellites <span class="math notranslate nohighlight">\(\mathbf{G} + \mathbf{k}\)</span>
+(star of <span class="math notranslate nohighlight">\(\mathbf{k}\)</span>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1704,7 +1740,7 @@ line is generated. Distance is measured perpendicular to the line.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.selection.select">
-<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bragg_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">inf)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetrized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L284-L361"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.select" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bragg_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">inf)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetrized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/selection.py#L288-L365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.selection.select" title="Link to this definition">#</a></dt>
 <dd><p>Select positions of a measured volume for refinement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1721,7 +1757,7 @@ line is generated. Distance is measured perpendicular to the line.</p>
 </dd>
 <dt><strong>background_fraction</strong><span class="classifier">float, optional</span></dt><dd><p>Fraction of the remaining valid positions sampled at random.</p>
 </dd>
-<dt><strong>q_range</strong><span class="classifier">tuple of float, optional</span></dt><dd><p>Allowed <code class="docutils literal notranslate"><span class="pre">|Q|</span></code> range in inverse Angstrom.</p>
+<dt><strong>q_range</strong><span class="classifier">tuple of float, optional</span></dt><dd><p>Allowed <span class="math notranslate nohighlight">\(|\mathbf{Q}|\)</span> range in inverse Angstrom.</p>
 </dd>
 <dt><strong>symmetrized</strong><span class="classifier">bool, optional</span></dt><dd><p>Keep one representative per Laue orbit.</p>
 </dd>
@@ -1741,18 +1777,21 @@ line is generated. Distance is measured perpendicular to the line.</p>
 <section id="module-discordant_parsimony.refine">
 <span id="discordant-parsimony-refine-module"></span><h2>discordant_parsimony.refine module<a class="headerlink" href="#module-discordant_parsimony.refine" title="Link to this heading">#</a></h2>
 <p>Linear least-squares refinement of pair-correlation coefficients.</p>
-<p>The model for observed intensities <code class="docutils literal notranslate"><span class="pre">y</span></code> with uncertainties <code class="docutils literal notranslate"><span class="pre">sigma</span></code> is</p>
-<blockquote>
-<div><p>y = s * (A_fixed c_fixed + A_free c_free) + B beta,</p>
-</div></blockquote>
-<p>where <code class="docutils literal notranslate"><span class="pre">A</span></code> holds design columns of the pair orbits, <code class="docutils literal notranslate"><span class="pre">c_fixed</span></code> are
-coefficients known exactly from the average structure (they set the
-absolute scale), <code class="docutils literal notranslate"><span class="pre">s</span></code> is the scale factor and <code class="docutils literal notranslate"><span class="pre">B</span></code> a smooth background
-basis. With <code class="docutils literal notranslate"><span class="pre">u</span> <span class="pre">=</span> <span class="pre">s</span> <span class="pre">c_free</span></code> the problem is linear in <code class="docutils literal notranslate"><span class="pre">(s,</span> <span class="pre">u,</span> <span class="pre">beta)</span></code>
-and is solved in one weighted least-squares step.</p>
+<p>The model for observed intensities <span class="math notranslate nohighlight">\(y\)</span> with uncertainties
+<span class="math notranslate nohighlight">\(\sigma\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[y = s\,(A_\mathrm{fixed} \mathbf{c}_\mathrm{fixed}
++ A_\mathrm{free} \mathbf{c}_\mathrm{free}) + B \boldsymbol{\beta},\]</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> holds design columns of the pair orbits,
+<span class="math notranslate nohighlight">\(\mathbf{c}_\mathrm{fixed}\)</span> are coefficients known exactly from
+the average structure (they set the absolute scale), <span class="math notranslate nohighlight">\(s\)</span> is the
+scale factor and <span class="math notranslate nohighlight">\(B\)</span> a smooth background basis. With
+<span class="math notranslate nohighlight">\(\mathbf{u} = s\,\mathbf{c}_\mathrm{free}\)</span> the problem is linear in
+<span class="math notranslate nohighlight">\((s, \mathbf{u}, \boldsymbol{\beta})\)</span> and is solved in one
+weighted least-squares step.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.refine.Refinement">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Refinement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">free</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_esd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_esd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">singular_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L19-L68"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.Refinement" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Refinement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">free</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_esd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_esd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">singular_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L25-L74"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.Refinement" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Refined coefficients and statistics.</p>
 <dl class="field-list simple">
@@ -1819,7 +1858,7 @@ and is solved in one weighted least-squares step.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.refine.Refinement.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L62-L68"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.Refinement.predict" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L68-L74"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.Refinement.predict" title="Link to this definition">#</a></dt>
 <dd><p>Model intensities for design columns <code class="docutils literal notranslate"><span class="pre">A</span></code> and basis <code class="docutils literal notranslate"><span class="pre">B</span></code>.</p>
 </dd></dl>
 
@@ -1852,14 +1891,14 @@ and is solved in one weighted least-squares step.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.refine.background_basis">
-<span class="sig-name descname"><span class="pre">background_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L90-L108"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.background_basis" title="Link to this definition">#</a></dt>
-<dd><p>Polynomial background in <code class="docutils literal notranslate"><span class="pre">|Q|^2</span></code>.</p>
+<span class="sig-name descname"><span class="pre">background_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L97-L115"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.background_basis" title="Link to this definition">#</a></dt>
+<dd><p>Polynomial background in <span class="math notranslate nohighlight">\(|\mathbf{Q}|^2\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>Q</strong><span class="classifier">ndarray, (m,)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">|Q|</span></code> in inverse Angstrom.</p>
 </dd>
-<dt><strong>degree</strong><span class="classifier">int, optional</span></dt><dd><p>Highest power of <code class="docutils literal notranslate"><span class="pre">|Q|^2</span></code>; <code class="docutils literal notranslate"><span class="pre">-1</span></code> for no background.</p>
+<dt><strong>degree</strong><span class="classifier">int, optional</span></dt><dd><p>Highest power of <span class="math notranslate nohighlight">\(|\mathbf{Q}|^2\)</span>; <code class="docutils literal notranslate"><span class="pre">-1</span></code> for no background.</p>
 </dd>
 </dl>
 </dd>
@@ -1873,14 +1912,15 @@ and is solved in one weighted least-squares step.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.refine.r_factors">
-<span class="sig-name descname"><span class="pre">r_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L71-L87"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.r_factors" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">r_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L77-L94"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.r_factors" title="Link to this definition">#</a></dt>
 <dd><p>Agreement factors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>R</strong><span class="classifier">float</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">sum</span> <span class="pre">|y</span> <span class="pre">-</span> <span class="pre">m|</span> <span class="pre">/</span> <span class="pre">sum</span> <span class="pre">|y|</span></code>.</p>
+<dt><strong>R</strong><span class="classifier">float</span></dt><dd><p><span class="math notranslate nohighlight">\(\sum |y - m| / \sum |y|\)</span>.</p>
 </dd>
-<dt><strong>wR</strong><span class="classifier">float</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">sqrt(sum</span> <span class="pre">w</span> <span class="pre">(y</span> <span class="pre">-</span> <span class="pre">m)^2</span> <span class="pre">/</span> <span class="pre">sum</span> <span class="pre">w</span> <span class="pre">y^2)</span></code> with <code class="docutils literal notranslate"><span class="pre">w</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">/</span> <span class="pre">sigma^2</span></code>.</p>
+<dt><strong>wR</strong><span class="classifier">float</span></dt><dd><p><span class="math notranslate nohighlight">\(\sqrt{\sum w (y - m)^2 / \sum w y^2}\)</span> with
+<span class="math notranslate nohighlight">\(w = 1 / \sigma^2\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -1889,9 +1929,10 @@ and is solved in one weighted least-squares step.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.refine.refine">
-<span class="sig-name descname"><span class="pre">refine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameterization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ridge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcond</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L111-L218"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.refine" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">refine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameterization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ridge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rcond</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/refine.py#L118-L226"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.refine.refine" title="Link to this definition">#</a></dt>
 <dd><p>Refine orbit coefficients against observed intensities.</p>
-<p>Coefficients are <code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">c0</span> <span class="pre">+</span> <span class="pre">N</span> <span class="pre">theta</span></code> (see
+<p>Coefficients are <span class="math notranslate nohighlight">\(\mathbf{c} = \mathbf{c}_0 + N
+\boldsymbol{\theta}\)</span> (see
 <a class="reference internal" href="#discordant_parsimony.constraints.parameterize" title="discordant_parsimony.constraints.parameterize"><code class="xref py py-func docutils literal notranslate"><span class="pre">discordant_parsimony.constraints.parameterize()</span></code></a>). When <code class="docutils literal notranslate"><span class="pre">c0</span></code>
 is nonzero (coefficients fixed by the average structure) it sets the
 absolute scale and a scale factor <code class="docutils literal notranslate"><span class="pre">s</span></code> is refined, with
@@ -2035,16 +2076,15 @@ intensities better.</p>
 </section>
 <section id="module-discordant_parsimony.realspace">
 <span id="discordant-parsimony-realspace-module"></span><h2>discordant_parsimony.realspace module<a class="headerlink" href="#module-discordant_parsimony.realspace" title="Link to this heading">#</a></h2>
-<p>Real-space view of pair terms: the model 3D-delta-PDF.</p>
-<p>The pair terms <code class="docutils literal notranslate"><span class="pre">(d,</span> <span class="pre">w,</span> <span class="pre">U)</span></code> define</p>
-<blockquote>
-<div><p>dPDF(r) = sum_p  w_p G(r - d_p; U_p),</p>
-</div></blockquote>
+<p>Real-space view of pair terms: the model 3D-<span class="math notranslate nohighlight">\(\Delta\)</span>PDF.</p>
+<p>The pair terms <span class="math notranslate nohighlight">\((\mathbf{d}_p, w_p, U_p)\)</span> define</p>
+<div class="math notranslate nohighlight">
+\[\Delta P(\mathbf{r}) = \sum_p w_p\, G(\mathbf{r} - \mathbf{d}_p;\, U_p),\]</div>
 <p>whose Fourier transform is the diffuse intensity evaluated by
 <code class="xref py py-func docutils literal notranslate"><span class="pre">discordant_parsimony.scattering.evaluate()</span></code>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.realspace.delta_pdf_slab">
-<span class="sig-name descname"><span class="pre">delta_pdf_slab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/realspace.py#L15-L91"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.realspace.delta_pdf_slab" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">delta_pdf_slab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/realspace.py#L17-L94"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.realspace.delta_pdf_slab" title="Link to this definition">#</a></dt>
 <dd><p>Model 3D-delta-PDF averaged over a slab of constant <code class="docutils literal notranslate"><span class="pre">z</span></code>.</p>
 <p>Each Gaussian is integrated exactly over <code class="docutils literal notranslate"><span class="pre">z</span></code> in <code class="docutils literal notranslate"><span class="pre">z_range</span></code> using
 its conditional distribution given <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code>, and divided by the
@@ -2068,7 +2108,8 @@ axes.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>pdf</strong><span class="classifier">ndarray, (len(y), len(x))</span></dt><dd><p>Density in fm^2 per unit cell per Angstrom^3.</p>
+<dt><strong>pdf</strong><span class="classifier">ndarray, (len(y), len(x))</span></dt><dd><p>Density in <span class="math notranslate nohighlight">\(\mathrm{fm}^2\)</span> per unit cell per
+<span class="math notranslate nohighlight">\(\mathring{\mathrm{A}}^3\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -2085,7 +2126,7 @@ them; otherwise <code class="docutils literal notranslate"><span class="pre">loc
 is used.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.io.Volume">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L32-L91"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L32-L92"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Histogrammed reciprocal-space volume on a regular grid.</p>
 <dl class="field-list simple">
@@ -2097,8 +2138,9 @@ is used.</p>
 </dd>
 <dt><strong>edges</strong><span class="classifier">list of ndarray</span></dt><dd><p>Bin edges along each axis.</p>
 </dd>
-<dt><strong>W</strong><span class="classifier">ndarray, (3, 3)</span></dt><dd><p>Projection matrix; Miller indices are <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">W</span> <span class="pre">&#64;</span> <span class="pre">u</span></code> for axis
-coordinates <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p>
+<dt><strong>W</strong><span class="classifier">ndarray, (3, 3)</span></dt><dd><p>Projection matrix; Miller indices are
+<span class="math notranslate nohighlight">\(\mathbf{h} = W \mathbf{u}\)</span> for axis coordinates
+<span class="math notranslate nohighlight">\(\mathbf{u}\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -2120,7 +2162,7 @@ coordinates <code class="docutils literal notranslate"><span class="pre">u</span
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.io.Volume.hkl">
-<span class="sig-name descname"><span class="pre">hkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L66-L82"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume.hkl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">hkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L67-L83"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume.hkl" title="Link to this definition">#</a></dt>
 <dd><p>Miller indices of bin centres.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2139,7 +2181,7 @@ coordinates <code class="docutils literal notranslate"><span class="pre">u</span
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discordant_parsimony.io.Volume.index">
-<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L84-L91"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume.index" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L85-L92"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.Volume.index" title="Link to this definition">#</a></dt>
 <dd><p>Nearest bin indices of axis coordinates <code class="docutils literal notranslate"><span class="pre">u</span></code> (…, 3).</p>
 </dd></dl>
 
@@ -2177,7 +2219,7 @@ coordinates <code class="docutils literal notranslate"><span class="pre">u</span
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.io.load_mdhisto">
-<span class="sig-name descname"><span class="pre">load_mdhisto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L94-L128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.load_mdhisto" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">load_mdhisto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L95-L129"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.load_mdhisto" title="Link to this definition">#</a></dt>
 <dd><p>Read a Mantid MDHistoWorkspace saved with <code class="docutils literal notranslate"><span class="pre">SaveMD</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2201,7 +2243,7 @@ coordinates <code class="docutils literal notranslate"><span class="pre">u</span
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.io.reduce_volume">
-<span class="sig-name descname"><span class="pre">reduce_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L131-L163"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.reduce_volume" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">reduce_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/io.py#L132-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.io.reduce_volume" title="Link to this definition">#</a></dt>
 <dd><p>Normalised, background-subtracted volume.</p>
 <p>Computes <code class="docutils literal notranslate"><span class="pre">data/norm</span> <span class="pre">-</span> <span class="pre">scale</span> <span class="pre">*</span> <span class="pre">background_data/background_norm</span></code>
 with uncorrelated error propagation. Bins with non-positive
