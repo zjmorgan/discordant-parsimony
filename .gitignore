@@ -227,3 +227,7 @@ __marimo__/
 /tests/data/
 *:com.dropbox.attrs
 src/discordant_parsimony/_version.py
+
+# Sphinx build output and generated API stubs
+docs/_build/
+docs/source/modules.rst

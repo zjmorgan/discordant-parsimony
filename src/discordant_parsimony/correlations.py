@@ -116,3 +116,55 @@ def independent_cluster_covariance(sites, clusters):
         for i, j, value in entries[key]:
             C[k, i, j] += value
     return R, C
+
+
+def fixed_cluster_orbits(orbits, sites, clusters):
+    """
+    Orbit coefficients fixed exactly by the average structure.
+
+    Pairs inside one split-site cluster (including self pairs) have
+    ``C_ab = x_a delta_ab - x_a x_b``, independent of any local order.
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+        Pairs and their orbits.
+    sites : Sites
+        Participating positions.
+    clusters : list of Cluster
+        Split-site clusters covering all positions.
+
+    Returns
+    -------
+    index : ndarray of int
+        Fixed orbit indices.
+    value : ndarray
+        Their covariance values.
+
+    """
+
+    owner = np.empty(len(sites), int)
+    rel = np.empty((len(sites), 3), int)
+    for k, cluster in enumerate(clusters):
+        owner[cluster.members] = k
+        rel[cluster.members] = cluster.offsets
+    inside = (owner[orbits.i] == owner[orbits.j]) & np.all(
+        orbits.R == rel[orbits.j] - rel[orbits.i], axis=1
+    )
+    x = sites.occupancy
+    value = np.where(orbits.i == orbits.j, x[orbits.i], 0.0)
+    value = value - x[orbits.i] * x[orbits.j]
+
+    index = np.unique(orbits.orbit[inside])
+    mixed = np.isin(orbits.orbit, index) & ~inside
+    if np.any(mixed):
+        raise ValueError("Orbit mixes intra- and inter-cluster pairs")
+    first = np.zeros(orbits.n_orbits, int)
+    first[orbits.orbit[::-1]] = np.arange(len(orbits))[::-1]
+    fixed = value[first[index]]
+    spread = np.abs(
+        value[inside] - fixed[np.searchsorted(index, orbits.orbit[inside])]
+    )
+    if np.any(spread > 1e-8):
+        raise ValueError("Inconsistent fixed values within an orbit")
+    return index, fixed

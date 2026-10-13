@@ -88,60 +88,75 @@ def check_rules(occ):
         assert not np.any(occ[..., i] * partner), "forbidden contact"
 
 
-rng = np.random.default_rng(0)
-configs = []
-for alpha, beta in itertools.permutations(range(3), 2):
-    for _ in range(REPEATS):
-        occ = configuration(rng, alpha, beta)
-        check_rules(occ)
-        configs.append(occ)
-configs = np.array(configs)
-mean = configs.mean(axis=(0, 1, 2, 3))
-for label in ("Tb2", "Sn1", "Sn2"):
-    print(f"{label} mean occupancy {mean[active.label == label].mean():.4f}")
+def configurations(seed=0):
+    """Occupations (m, L, L, L, n) of 2:2 states for all axis choices."""
 
-volume = reduce_volume(
-    *[
-        next(root.glob(f"*m-3m_{tag}.nxs"))
-        for tag in ("data", "norm", "bkg_data", "bkg_norm")
-    ]
-)
+    rng = np.random.default_rng(seed)
+    configs = []
+    for alpha, beta in itertools.permutations(range(3), 2):
+        for _ in range(REPEATS):
+            occ = configuration(rng, alpha, beta)
+            check_rules(occ)
+            configs.append(occ)
+    return np.array(configs)
 
-R_cov, C = covariance_from_configurations(configs, MAX_OFFSET)
-terms = pair_terms_from_covariance(active, R_cov, C)
-terms = terms.prune(1e-12 * np.abs(terms.w).max()).merge()
-terms = terms.bin_average(volume.widths)
-print(f"{len(terms)} pair terms")
 
-g = np.arange(-12, 12.001, 0.25)
-hk = np.stack(np.meshgrid(g, g, indexing="xy"), -1)
-plane = np.concatenate([hk, np.ones(hk.shape[:2] + (1,))], -1)
-start = time.perf_counter()
-model = evaluate(plane, terms, structure)
-print(f"evaluated {model.size} points in {time.perf_counter() - start:.1f} s")
-data = volume.signal[volume.index(plane)]
+def main():
+    configs = configurations()
+    mean = configs.mean(axis=(0, 1, 2, 3))
+    for label in ("Tb2", "Sn1", "Sn2"):
+        print(
+            f"{label} mean occupancy {mean[active.label == label].mean():.4f}"
+        )
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-
-out = Path(__file__).resolve().parents[1] / "results"
-out.mkdir(exist_ok=True)
-fig, ax = plt.subplots(1, 2, figsize=(12, 6))
-for a, img, title in zip(
-    ax, (data, model), ("data (h,k,1)", "2:2 pseudospin model (h,k,1)")
-):
-    a.imshow(
-        img,
-        origin="lower",
-        extent=[-12, 12, -12, 12],
-        vmin=np.nanpercentile(img, 1),
-        vmax=np.nanpercentile(img, 99.3),
+    volume = reduce_volume(
+        *[
+            next(root.glob(f"*m-3m_{tag}.nxs"))
+            for tag in ("data", "norm", "bkg_data", "bkg_norm")
+        ]
     )
-    a.set_title(title)
-    a.set_xlabel("h")
-    a.set_ylabel("k")
-fig.tight_layout()
-fig.savefig(out / "tb5ru6sn18_ice_hk1.png", dpi=80)
-print(f"min model intensity {model.min():.3g}, max {model.max():.3g}")
+
+    R_cov, C = covariance_from_configurations(configs, MAX_OFFSET)
+    terms = pair_terms_from_covariance(active, R_cov, C)
+    terms = terms.prune(1e-12 * np.abs(terms.w).max()).merge()
+    terms = terms.bin_average(volume.widths)
+    print(f"{len(terms)} pair terms")
+
+    g = np.arange(-12, 12.001, 0.25)
+    hk = np.stack(np.meshgrid(g, g, indexing="xy"), -1)
+    plane = np.concatenate([hk, np.ones(hk.shape[:2] + (1,))], -1)
+    start = time.perf_counter()
+    model = evaluate(plane, terms, structure)
+    print(
+        f"evaluated {model.size} points in {time.perf_counter() - start:.1f} s"
+    )
+    data = volume.signal[volume.index(plane)]
+
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    out = Path(__file__).resolve().parents[1] / "results"
+    out.mkdir(exist_ok=True)
+    fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+    for a, img, title in zip(
+        ax, (data, model), ("data (h,k,1)", "2:2 pseudospin model (h,k,1)")
+    ):
+        a.imshow(
+            img,
+            origin="lower",
+            extent=[-12, 12, -12, 12],
+            vmin=np.nanpercentile(img, 1),
+            vmax=np.nanpercentile(img, 99.3),
+        )
+        a.set_title(title)
+        a.set_xlabel("h")
+        a.set_ylabel("k")
+    fig.tight_layout()
+    fig.savefig(out / "tb5ru6sn18_ice_hk1.png", dpi=80)
+    print(f"min model intensity {model.min():.3g}, max {model.max():.3g}")
+
+
+if __name__ == "__main__":
+    main()

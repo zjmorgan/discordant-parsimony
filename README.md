@@ -1,5 +1,7 @@
 # discordant-parsimony
 
+Documentation: https://zjmorgan.github.io/discordant-parsimony
+
 Forward modeling of single-crystal diffuse scattering directly from
 finite-range pair correlations. Working name; successor to
 [rmc-discord](https://github.com/zjmorgan/rmc-discord). No atomistic
@@ -42,3 +44,8 @@ private data are skipped when it is absent.
     conda activate discordant
     python -m pip install -e .
     pytest
+
+Build the documentation locally:
+
+    sphinx-apidoc -o docs/source src/discordant_parsimony
+    sphinx-build -b html docs docs/_build/html

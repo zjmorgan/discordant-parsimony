@@ -10,7 +10,7 @@ participating positions:
   than a physically allowed distance, which cannot both be occupied.
 """
 
-from collections import Counter, deque
+import collections
 from dataclasses import dataclass
 
 import numpy as np
@@ -63,13 +63,13 @@ class Contacts:
 
         """
 
-        per_label = Counter(sites.label)
+        per_label = collections.Counter(sites.label)
         keys = zip(
             sites.label[self.i],
             sites.label[self.j],
             np.round(self.distance, decimals),
         )
-        counts = Counter(keys)
+        counts = collections.Counter(keys)
         return sorted(
             (li, lj, d, n / per_label[li]) for (li, lj, d), n in counts.items()
         )
@@ -91,7 +91,8 @@ def find_contacts(structure, sites, max_distance):
     Returns
     -------
     contacts : Contacts
-        Self-contacts at zero separation are excluded.
+        Only the self pair (i = j, R = 0) is excluded, so coincident
+        positions of different labels (substitution) are contacts.
 
     """
 
@@ -100,7 +101,11 @@ def find_contacts(structure, sites, max_distance):
     R = np.stack(np.meshgrid(*ranges, indexing="ij"), -1).reshape(-1, 3)
     dx = sites.x[None, :, None] - sites.x[:, None, None] + R
     d = structure.distance(dx)
-    i, j, k = np.nonzero((d < max_distance) & (d > 1e-8))
+    self_pair = (
+        np.all(R == 0, axis=1)[None, None]
+        & np.eye(len(sites), dtype=bool)[..., None]
+    )
+    i, j, k = np.nonzero((d < max_distance) & ~self_pair)
     return Contacts(i, j, R[k], d[i, j, k])
 
 
@@ -167,7 +172,7 @@ def find_clusters(structure, sites, cluster_distance, tol=1e-3):
         if offset[root] is not None:
             continue
         offset[root] = np.zeros(3, int)
-        members, queue = [root], deque([root])
+        members, queue = [root], collections.deque([root])
         while queue:
             i = queue.popleft()
             for j, R in neighbors[i]:

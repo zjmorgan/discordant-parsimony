@@ -11,3 +11,7 @@ dependencies:
   - pip
   - pytest
   - black
+  - sphinx
+  - sphinx-autodoc-typehints
+  - pydata-sphinx-theme
+  - numpydoc
