@@ -252,7 +252,15 @@ class Structure:
         labels = data["_atom_site_label"]
         types = data.get("_atom_site_type_symbol", labels)
         occupancies = data.get("_atom_site_occupancy", ["1"] * len(labels))
-        uiso = data.get("_atom_site_U_iso_or_equiv", ["0"] * len(labels))
+        if "_atom_site_U_iso_or_equiv" in data:
+            uiso = [_value(u) for u in data["_atom_site_U_iso_or_equiv"]]
+        elif "_atom_site_B_iso_or_equiv" in data:
+            uiso = [
+                _value(B) / (8 * np.pi**2)
+                for B in data["_atom_site_B_iso_or_equiv"]
+            ]
+        else:
+            uiso = [0.0] * len(labels)
 
         asymmetric = []
         for i, label in enumerate(labels):
@@ -260,7 +268,7 @@ class Structure:
             if label in aniso:
                 V = aniso[label]
             else:
-                V = _value(uiso[i]) * np.linalg.inv(A) @ np.linalg.inv(A).T
+                V = uiso[i] * np.linalg.inv(A) @ np.linalg.inv(A).T
             asymmetric.append(
                 {
                     "label": label,
@@ -277,6 +285,56 @@ class Structure:
             site["U"] = A @ V @ A.T
             structure.asymmetric.append(site)
         return structure
+
+    def with_occupancies(self, occupancies):
+        """
+        Same structure with some site occupancies replaced.
+
+        Parameters
+        ----------
+        occupancies : dict
+            ``{label: occupancy}`` for the sites to change, e.g. a
+            composition that differs from the one in the CIF.
+
+        Returns
+        -------
+        structure : Structure
+
+        """
+
+        labels = {site["label"] for site in self.asymmetric}
+        missing = set(occupancies) - labels
+        if missing:
+            raise KeyError(f"Unknown site labels {sorted(missing)}")
+        asymmetric = [
+            dict(
+                site,
+                occupancy=occupancies.get(site["label"], site["occupancy"]),
+            )
+            for site in self.asymmetric
+        ]
+        return Structure(self.cell, self.operators, asymmetric)
+
+    def with_cell(self, cell):
+        """
+        Same structure on different lattice parameters.
+
+        Fractional coordinates, occupancies and Cartesian displacement
+        tensors are kept; use this to adopt the lattice refined from
+        the diffuse-scattering measurement itself.
+
+        Parameters
+        ----------
+        cell : sequence of float
+            Lattice parameters ``(a, b, c, alpha, beta, gamma)``.
+
+        Returns
+        -------
+        structure : Structure
+
+        """
+
+        return Structure(cell, self.operators, self.asymmetric)
 
     def sites(self, tol=1e-4):
         """

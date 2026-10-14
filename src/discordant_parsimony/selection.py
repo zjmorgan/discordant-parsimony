@@ -63,20 +63,87 @@ def is_allowed(h, structure, tol=1e-6):
     return integer & centered
 
 
-def laue_operators(structure):
+def _rotation(op):
+    if isinstance(op, str):
+        from discordant_parsimony.structure import parse_symop
+
+        op = parse_symop(op)[0]
+    return np.rint(np.asarray(op)).astype(int)
+
+
+def laue_operators(structure, extra=()):
     """
     Laue group rotations acting on Miller indices as ``h @ W``.
+
+    Parameters
+    ----------
+    structure : Structure
+        Supplies the point-group rotations of the space group.
+    extra : sequence, optional
+        Additional rotations (symmetry-operator strings such as
+        ``"y, x, z"`` or 3x3 matrices) when the data were symmetrized to
+        a higher Laue group than that of the structure, e.g. by
+        merohedral twinning. The group is closed under products.
 
     Returns
     -------
     W : ndarray of int, (g, 3, 3)
-        Distinct point-group rotations together with inversion.
+        Distinct rotations of the Laue group, inversion included.
 
     """
 
-    W = np.array([np.rint(W).astype(int) for W, _ in structure.operators])
-    W = np.concatenate([W, -W])
-    return np.unique(W, axis=0)
+    W = [np.rint(W).astype(int) for W, _ in structure.operators]
+    W += [_rotation(op) for op in extra]
+    group = {w.tobytes(): w for w in W + [-w for w in W]}
+    while True:
+        new = {}
+        for a in group.values():
+            for b in group.values():
+                c = a @ b
+                if c.tobytes() not in group:
+                    new[c.tobytes()] = c
+        if not new:
+            break
+        group.update(new)
+        if len(group) > 48:
+            raise ValueError(
+                "Extra operators do not form a crystallographic group"
+            )
+    return np.unique(np.array(list(group.values())), axis=0)
+
+
+def coset_operators(structure, extra=()):
+    """
+    Representatives of the data Laue group modulo that of the structure.
+
+    A model with the symmetry of the structure is compared with data
+    symmetrized to the larger group by averaging it over these
+    rotations (``h @ W``).
+
+    Parameters
+    ----------
+    structure : Structure
+    extra : sequence, optional
+        Additional rotations, as for :func:`laue_operators`.
+
+    Returns
+    -------
+    W : ndarray of int, (n, 3, 3)
+        Coset representatives, the identity first.
+
+    """
+
+    small = {w.tobytes() for w in laue_operators(structure)}
+    covered, reps = set(), [np.eye(3, dtype=int)]
+    covered |= small
+    for w in laue_operators(structure, extra):
+        if w.tobytes() in covered:
+            continue
+        reps.append(w)
+        covered |= {
+            (w @ np.frombuffer(g, int).reshape(3, 3)).tobytes() for g in small
+        }
+    return np.array(reps)
 
 
 def _nearest_allowed(r, structure):
@@ -365,7 +432,7 @@ def select(
     )
 
 
-def canonical(h, structure, decimals=6):
+def canonical(h, structure, decimals=6, extra=()):
     """
     Canonical Laue-equivalent of each position.
 
@@ -379,6 +446,9 @@ def canonical(h, structure, decimals=6):
     structure : Structure
     decimals : int, optional
         Rounding used to compare images.
+    extra : sequence, optional
+        Additional rotations of the data symmetry, as for
+        :func:`laue_operators`.
 
     Returns
     -------
@@ -386,7 +456,7 @@ def canonical(h, structure, decimals=6):
 
     """
 
-    W = laue_operators(structure)
+    W = laue_operators(structure, extra)
     images = np.round(np.einsum("ma,gab->gmb", h, W), decimals)
     best = np.ones(images.shape[:2], bool)
     for axis in range(3):
@@ -394,3 +464,103 @@ def canonical(h, structure, decimals=6):
         best &= values == values.max(axis=0)
     first = np.argmax(best, axis=0)
     return images[first, np.arange(len(h))]
+
+
+def in_fundamental_domain(h, structure, extra=(), decimals=6):
+    """
+    Positions lying in the Laue fundamental domain.
+
+    A position is kept when it is its own canonical image. Unlike
+    :func:`asymmetric_unit` this needs no grid closed under the Laue
+    group (e.g. hexagonal data on an orthogonal grid), and keeps about
+    one position per orbit of symmetrized data.
+
+    Parameters
+    ----------
+    h : ndarray, (m, 3)
+        Miller indices.
+    structure : Structure
+    extra : sequence, optional
+        Additional rotations of the data symmetry.
+    decimals : int, optional
+        Rounding used to compare images.
+
+    Returns
+    -------
+    keep : ndarray of bool, (m,)
+
+    """
+
+    h = np.asarray(h, dtype=float)
+    rep = canonical(h, structure, decimals, extra)
+    return np.all(np.isclose(rep, np.round(h, decimals)), axis=1)
+
+
+def powder_ring_mask(
+    Q, y, bin_width=0.01, baseline_width=0.5, threshold=4.0, dilate=1
+):
+    r"""
+    Positions on powder rings, detected from the radial profile.
+
+    The median intensity in thin :math:`|\mathbf{Q}|` shells is compared
+    with a running median over ``baseline_width``. Shells exceeding the
+    baseline by more than ``threshold`` robust standard deviations
+    (median absolute deviation of the excess) are rings, and are
+    widened by ``dilate`` shells on each side. Single-crystal Bragg and
+    diffuse intensity is anisotropic and barely moves the shell median,
+    so rings from polycrystalline contamination or the sample
+    environment stand out.
+
+    Parameters
+    ----------
+    Q : ndarray, (m,)
+        :math:`|\mathbf{Q}|` in inverse Angstrom.
+    y : ndarray, (m,)
+        Intensities.
+    bin_width : float, optional
+        Shell width in inverse Angstrom.
+    baseline_width : float, optional
+        Width of the running-median baseline in inverse Angstrom.
+    threshold : float, optional
+        Detection threshold in robust standard deviations.
+    dilate : int, optional
+        Extra shells masked on each side of a detected ring.
+
+    Returns
+    -------
+    mask : ndarray of bool, (m,)
+        True on rings.
+    rings : ndarray
+        Centers of the masked shells in inverse Angstrom.
+
+    """
+
+    Q, y = np.asarray(Q, float), np.asarray(y, float)
+    edges = np.arange(Q.min(), Q.max() + bin_width, bin_width)
+    shell = np.clip(np.digitize(Q, edges) - 1, 0, len(edges) - 2)
+    n = len(edges) - 1
+    median = np.full(n, np.nan)
+    for k in range(n):
+        values = y[shell == k]
+        if len(values) >= 5:
+            median[k] = np.median(values)
+    half = max(1, int(round(baseline_width / bin_width / 2)))
+    baseline = np.empty(n)
+    for k in range(n):
+        # symmetric window, shrinking at the ends so a sloped profile
+        # does not produce a one-sided (biased) baseline
+        w = min(half, k, n - 1 - k)
+        window = median[k - w : k + w + 1]
+        finite = window[np.isfinite(window)]
+        baseline[k] = np.median(finite) if len(finite) else np.nan
+    excess = median - baseline
+    scale = 1.4826 * np.nanmedian(np.abs(excess - np.nanmedian(excess)))
+    ring = np.nan_to_num(excess) > threshold * scale
+    ring[[0, -1]] = False
+    for _ in range(dilate):
+        grown = ring.copy()
+        grown[1:] |= ring[:-1]
+        grown[:-1] |= ring[1:]
+        ring = grown
+    centers = 0.5 * (edges[1:] + edges[:-1])
+    return ring[shell], centers[ring]

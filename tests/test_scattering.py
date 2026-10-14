@@ -129,3 +129,101 @@ def test_independent_atom_self_term(tetragonal):
             * np.cos(2 * np.pi * h @ d)
         )
     assert np.allclose(evaluate(h, terms, tetragonal), expected)
+
+
+def test_bin_average_on_skewed_hexagonal_bins():
+    """Volume axes [H,H,0], [-H,H,0], [0,0,L] on a hexagonal cell: the
+    analytic bin factor must equal numerical averaging over the bin in
+    the volume coordinates u, with h = W u."""
+
+    from discordant_parsimony import Structure
+
+    site = {
+        "label": "X1",
+        "species": "C",
+        "occupancy": 0.5,
+        "x": np.array([0.31, 0.12, 0.2]),
+        "U": 0.01 * np.eye(3),
+    }
+    hexagonal = Structure(
+        (9.7, 9.7, 9.6, 90, 90, 120), [(np.eye(3), np.zeros(3))], [site]
+    )
+    rng = np.random.default_rng(3)
+    d = rng.normal(size=(40, 3)) * 2
+    d = np.vstack([d, -d])
+    terms = PairTerms(d, rng.normal(size=40).repeat(2))
+    terms.w[40:] = terms.w[:40]
+    W = np.array([[1.0, -1, 0], [1, 1, 0], [0, 0, 1]])
+    widths = np.array([0.11, 0.19, 0.06])
+    k = 40  # midpoint error falls as 1/k^2
+    t = (np.arange(k) + 0.5) / k - 0.5
+    box = np.stack(np.meshgrid(t, t, t, indexing="ij"), -1).reshape(-1, 3)
+    for u0 in ([1.3, -0.4, 2.1], [0.2, 0.7, -1.0]):
+        u = np.asarray(u0) + box * widths
+        numeric = evaluate(u @ W.T, terms, hexagonal).mean()
+        exact = evaluate(
+            np.asarray(u0) @ W.T, terms.bin_average(widths, W), hexagonal
+        )
+        assert np.isclose(numeric, exact, rtol=1e-3)
+        # treating widths as along h, k, l is wrong for this projection
+        wrong = evaluate(
+            np.asarray(u0) @ W.T, terms.bin_average(widths), hexagonal
+        )
+        assert not np.isclose(numeric, wrong, rtol=1e-2)
+
+
+def test_design_matrix_cosets_use_the_measured_bin():
+    """With a mirror operator, the averaged column must equal the
+    numerical bin average of the twin-averaged point intensity."""
+
+    from discordant_parsimony import Structure
+    from discordant_parsimony.scattering import design_matrix
+    from discordant_parsimony.structure import parse_symop
+    from discordant_parsimony.symmetry import orbit_pair_terms, pair_orbits
+
+    ops = [
+        "x, y, z",
+        "-y, x-y, z",
+        "-x+y, -x, z",
+        "x, y, -z",
+        "-y, x-y, -z",
+        "-x+y, -x, -z",
+    ]
+    site = {
+        "label": "X1",
+        "species": "C",
+        "occupancy": 0.5,
+        "x": np.array([0.31, 0.12, 0.2]),
+        "U": 0.004 * np.eye(3),
+    }
+    structure = Structure(
+        (9.7, 9.7, 9.6, 90, 90, 120), [parse_symop(o) for o in ops], [site]
+    )
+    sites = structure.sites()
+    orbits = pair_orbits(structure, sites, 8.0)
+    rng = np.random.default_rng(4)
+    c = rng.normal(size=orbits.n_orbits)
+    mirror = parse_symop("y, x, z")[0].astype(int)
+    cosets = np.array([np.eye(3, dtype=int), mirror])
+    W = np.array([[1.0, -1, 0], [1, 1, 0], [0, 0, 1]])
+    widths = np.array([0.11, 0.19, 0.06])
+    terms = orbit_pair_terms(orbits, sites, c, thermal=False)
+    k = 10
+    t = (np.arange(k) + 0.5) / k - 0.5
+    box = np.stack(np.meshgrid(t, t, t, indexing="ij"), -1).reshape(-1, 3)
+    u0 = np.array([0.9, -0.3, 1.7])
+    h_box = (u0 + box * widths) @ W.T
+    numeric = np.mean(
+        [evaluate(h_box @ M, terms, structure).mean() for M in cosets]
+    )
+    A = design_matrix(
+        (u0 @ W.T)[None],
+        orbits,
+        sites,
+        structure,
+        widths=widths,
+        thermal=False,
+        operators=cosets,
+        projection=W,
+    )
+    assert np.isclose(A[0] @ c, numeric, rtol=3e-3)

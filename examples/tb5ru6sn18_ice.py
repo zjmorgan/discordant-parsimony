@@ -8,7 +8,7 @@ Sn-facing cubes (2:2 on every fcc tetrahedron), and each cage's single
 Sn2 has one allowed position. Configurations from the family
 sigma(n) = (-1)^{n_a} g(n_b) satisfy the rule for any +/-1 sequence g.
 
-Requires the private data (``$DIFFUSE_DATA_ROOT/Tb5Ru6Sn18``). Output
+Requires the private data (``$DIFFUSE_DATA_ROOT/Tb5Ru6Sn18_293K``). Output
 goes to ``results/`` (ignored by git).
 """
 
@@ -31,7 +31,7 @@ L = 8  # cells per axis of the pseudospin lattice
 REPEATS = 4  # random g sequences per axis assignment
 MAX_OFFSET = 2  # correlation cutoff; the 0.25 r.l.u. grid resolves +/-2
 
-root = data_root() / "Tb5Ru6Sn18"
+root = data_root() / "Tb5Ru6Sn18_293K"
 structure = Structure.from_cif(root / "Tb5Ru6Sn18.cif")
 sites = structure.sites()
 active = sites.select(sites.partial())

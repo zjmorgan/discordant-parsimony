@@ -14,7 +14,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from discordant_parsimony.constraints import parameterize
+from discordant_parsimony.constraints import (
+    parameterize,
+    stack_parameterizations,
+)
 from discordant_parsimony.refine import r_factors, refine
 
 
@@ -59,6 +62,7 @@ def participation_scan(
     rows,
     train,
     B=None,
+    size=None,
 ):
     """
     Refine every combination of participating units.
@@ -83,6 +87,12 @@ def participation_scan(
         Training positions; the rest are held out.
     B : ndarray, (m, nb), optional
         Background basis.
+    size : dict, optional
+        Size-effect coefficients, ``{"A": design columns, "orbit": orbit
+        of each column, "rows": their constraint rows}``. Every unit
+        combination is then refined without and with the size effect
+        (labelled ``"size effect"``); its coefficients follow the same
+        participation switches as the occupational ones.
 
     Returns
     -------
@@ -105,33 +115,52 @@ def participation_scan(
     B = np.zeros((len(y), 0)) if B is None else B
     models = []
     names = list(units)
+    sizes = [False, True] if size is not None else [False]
     for k in range(len(names) + 1):
         for chosen in itertools.combinations(names, k):
             on = np.isin(unit_i, chosen) & np.isin(unit_j, chosen)
             off = np.flatnonzero(~on & ~is_fixed)
             zero = np.zeros((len(off), orbits.n_orbits))
             zero[np.arange(len(off)), off] = 1
-            p = parameterize(orbits.n_orbits, fixed, np.vstack([rows, zero]))
-            r = refine(
-                y[train],
-                sigma[train],
-                A[train],
-                B=B[train],
-                parameterization=p,
+            p_occ = parameterize(
+                orbits.n_orbits, fixed, np.vstack([rows, zero])
             )
-            model = r.predict(A[test], B[test])
-            chi2_test = np.sum(((y[test] - model) / sigma[test]) ** 2)
-            _, wR = r_factors(y[test], sigma[test], model)
-            n = train.sum()
-            models.append(
-                ParticipationModel(
-                    chosen,
-                    r.n_params,
-                    r.reduced_chi2,
-                    chi2_test / test.sum(),
-                    wR,
-                    r.chi2 + r.n_params * np.log(n),
-                    r,
+            for with_size in sizes:
+                if with_size:
+                    if not chosen:
+                        continue
+                    n_vec = size["A"].shape[1]
+                    off_vec = np.flatnonzero(~on[size["orbit"]])
+                    zero_vec = np.zeros((len(off_vec), n_vec))
+                    zero_vec[np.arange(len(off_vec)), off_vec] = 1
+                    p_vec = parameterize(
+                        n_vec, None, np.vstack([size["rows"], zero_vec])
+                    )
+                    p = stack_parameterizations(p_occ, p_vec)
+                    A_all = np.hstack([A, size["A"]])
+                    label = chosen + ("size effect",)
+                else:
+                    p, A_all, label = p_occ, A, chosen
+                r = refine(
+                    y[train],
+                    sigma[train],
+                    A_all[train],
+                    B=B[train],
+                    parameterization=p,
                 )
-            )
+                model = r.predict(A_all[test], B[test])
+                chi2_test = np.sum(((y[test] - model) / sigma[test]) ** 2)
+                _, wR = r_factors(y[test], sigma[test], model)
+                n = train.sum()
+                models.append(
+                    ParticipationModel(
+                        label,
+                        r.n_params,
+                        r.reduced_chi2,
+                        chi2_test / test.sum(),
+                        wR,
+                        r.chi2 + r.n_params * np.log(n),
+                        r,
+                    )
+                )
     return sorted(models, key=lambda m: m.chi2_test)

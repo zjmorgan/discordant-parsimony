@@ -129,18 +129,50 @@ def load_mdhisto(filename):
     return signal, errors_squared, edges, W
 
 
-def reduce_volume(data, norm, background_data, background_norm, scale=1.0):
+def load_lattice(filename):
     """
-    Normalized, background-subtracted volume.
+    Lattice parameters stored with an MDHisto volume.
 
-    Computes ``data/norm - scale * background_data/background_norm``
-    with uncorrelated error propagation. Bins with non-positive
+    Parameters
+    ----------
+    filename : str or pathlib.Path
+        NeXus file saved by Mantid with an oriented lattice.
+
+    Returns
+    -------
+    cell : tuple of float or None
+        ``(a, b, c, alpha, beta, gamma)``, or ``None`` if absent.
+
+    """
+
+    import h5py
+
+    base = "MDHistoWorkspace/experiment0/sample/oriented_lattice/unit_cell_"
+    keys = ("a", "b", "c", "alpha", "beta", "gamma")
+    with h5py.File(filename, "r") as f:
+        if base + "a" not in f:
+            return None
+        return tuple(float(np.ravel(f[base + k][()])[0]) for k in keys)
+
+
+def reduce_volume(
+    data, norm, background_data=None, background_norm=None, scale=1.0
+):
+    """
+    Normalized, optionally background-subtracted volume.
+
+    Computes ``data/norm`` minus ``scale * background_data/background_norm``
+    when a background is given, with uncorrelated error propagation
+    (normalizations are treated as exact). Bins with non-positive
     normalization are ``nan``.
 
     Parameters
     ----------
-    data, norm, background_data, background_norm : str or pathlib.Path
-        MDHisto files of the sample and background measurements.
+    data, norm : str or pathlib.Path
+        MDHisto files of the sample measurement.
+    background_data, background_norm : str or pathlib.Path, optional
+        MDHisto files of a background measurement. Without them the
+        background stays in the data and should be modeled.
     scale : float, optional
         Background scale factor.
 
@@ -150,15 +182,22 @@ def reduce_volume(data, norm, background_data, background_norm, scale=1.0):
 
     """
 
+    if (background_data is None) != (background_norm is None):
+        raise ValueError("Give both background files or neither")
     d, d2, edges, W = load_mdhisto(data)
     n, _, _, _ = load_mdhisto(norm)
-    b, b2, _, _ = load_mdhisto(background_data)
-    bn, _, _, _ = load_mdhisto(background_norm)
 
     with np.errstate(divide="ignore", invalid="ignore"):
-        signal = d / n - scale * b / bn
-        sigma = np.sqrt(d2 / n**2 + scale**2 * b2 / bn**2)
-    invalid = (n <= 0) | (bn <= 0)
+        signal = d / n
+        variance = d2 / n**2
+        invalid = n <= 0
+        if background_data is not None:
+            b, b2, _, _ = load_mdhisto(background_data)
+            bn, _, _, _ = load_mdhisto(background_norm)
+            signal = signal - scale * b / bn
+            variance = variance + scale**2 * b2 / bn**2
+            invalid |= bn <= 0
+    sigma = np.sqrt(variance)
     signal[invalid] = np.nan
     sigma[invalid] = np.nan
     return Volume(signal, sigma, edges, W)

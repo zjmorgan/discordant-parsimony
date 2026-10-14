@@ -91,6 +91,43 @@ def evaluate(h, terms, structure, max_elements=2**22, check=False):
     return I.reshape(shape)
 
 
+def bin_factor(d, widths, projection=None):
+    r"""
+    Attenuation of pair terms by averaging over histogram bins.
+
+    A bin spans widths :math:`\Delta u_a` along the axes of the volume,
+    whose Miller indices are :math:`\mathbf{h} = W\mathbf{u}`. Since
+    :math:`\mathbf{h}\cdot\mathbf{d} = \mathbf{u}\cdot(W^\mathsf{T}
+    \mathbf{d})`, averaging :math:`e^{2\pi i \mathbf{h}\cdot\mathbf{d}}`
+    over the bin multiplies a term by
+
+    .. math::
+
+        \prod_a \operatorname{sinc}\!\left(\Delta u_a\,
+        (W^\mathsf{T}\mathbf{d})_a\right).
+
+    Parameters
+    ----------
+    d : ndarray, (n, 3)
+        Pair vectors in fractional coordinates.
+    widths : array_like, (3,)
+        Bin widths along the volume axes ``u``.
+    projection : ndarray, (3, 3), optional
+        The projection matrix :math:`W` of the volume; identity (axes
+        along h, k, l) by default.
+
+    Returns
+    -------
+    factor : ndarray, (n,)
+
+    """
+
+    d = np.asarray(d, dtype=float)
+    if projection is not None:
+        d = d @ np.asarray(projection, dtype=float)
+    return np.prod(np.sinc(np.asarray(widths, dtype=float) * d), axis=1)
+
+
 def design_matrix(
     h,
     orbits,
@@ -100,6 +137,8 @@ def design_matrix(
     thermal=True,
     b=None,
     max_elements=2**22,
+    operators=None,
+    projection=None,
 ):
     r"""
     Intensity per unit covariance of each pair orbit.
@@ -108,12 +147,17 @@ def design_matrix(
 
     .. math::
 
-        A_k(\mathbf{Q}) = \sum_{p \in k} b_i b_j\, e^{-W_i - W_j}
-        \cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)
-        \prod_a \operatorname{sinc}(\Delta h_a d_{p,a}),
+        A_k(\mathbf{h}) = \frac{1}{n_W} \sum_{W} \sum_{p \in k} b_i b_j\,
+        e^{-W_i - W_j}
+        \cos(2\pi\, \mathbf{h} \cdot R_W\mathbf{d}_p)\,
+        \beta(R_W \mathbf{d}_p),
 
-    so that :math:`I = A \mathbf{c}` for orbit coefficients
-    :math:`\mathbf{c}`.
+    averaged over rotations :math:`R_W` (``h @ W``), with the bin factor
+    :math:`\beta` of :func:`bin_factor` and Debye-Waller factors at
+    :math:`\mathbf{h} R_W`, so that :math:`I = A \mathbf{c}` for orbit
+    coefficients :math:`\mathbf{c}`. The bin is the measured one around
+    :math:`\mathbf{h}` for every image, which is why the rotation acts
+    on the pair vector inside the bin factor.
 
     Parameters
     ----------
@@ -126,13 +170,22 @@ def design_matrix(
     structure : Structure
         Supplies the reciprocal metric.
     widths : array_like, (3,), optional
-        Histogram bin widths in r.l.u. for exact bin averaging.
+        Histogram bin widths along the volume axes for exact bin
+        averaging.
     thermal : bool, optional
         Include Debye-Waller factors.
     b : array_like, (n,), optional
         Scattering lengths in fm. Defaults to neutron values.
     max_elements : int, optional
         Tile size bound on Q-by-pair products.
+    operators : ndarray of int, (n, 3, 3), optional
+        Average over ``h @ W`` for these rotations, e.g. the coset
+        representatives of a data symmetry higher than that of the
+        structure
+        (:func:`~discordant_parsimony.selection.coset_operators`).
+    projection : ndarray, (3, 3), optional
+        Projection matrix of the volume (``Volume.W``) when its axes are
+        not along h, k, l.
 
     Returns
     -------
@@ -144,22 +197,124 @@ def design_matrix(
 
     h = np.asarray(h, dtype=float).reshape(-1, 3)
     b = sites.b if b is None else np.asarray(b)
-    w = b[orbits.i] * b[orbits.j]
-    if widths is not None:
-        w = w * np.prod(np.sinc(np.asarray(widths) * orbits.d), axis=1)
-    S = csr_matrix(
-        (w, (np.arange(len(orbits)), orbits.orbit)),
-        shape=(len(orbits), orbits.n_orbits),
-    )
+    if operators is None or len(operators) == 0:
+        operators = [np.eye(3)]
     U6 = _tensor_components(sites.U)
     tile = max(1, max_elements // max(1, len(orbits)))
 
-    A = np.empty((len(h), orbits.n_orbits))
-    for start in range(0, len(h), tile):
-        hs = h[start : start + tile]
-        X = np.cos(2 * np.pi * hs @ orbits.d.T)
-        if thermal:
-            dw = np.exp(-0.5 * _quadratic_components(structure.Q(hs)) @ U6.T)
-            X *= dw[:, orbits.i] * dw[:, orbits.j]
-        A[start : start + tile] = (S.T @ X.T).T
-    return A
+    A = np.zeros((len(h), orbits.n_orbits))
+    for W in operators:
+        W = np.asarray(W, dtype=float)
+        # (h W) . d = h . (W d): rotate the pair vectors
+        d = orbits.d @ W.T
+        w = b[orbits.i] * b[orbits.j]
+        if widths is not None:
+            w = w * bin_factor(d, widths, projection)
+        S = csr_matrix(
+            (w, (np.arange(len(orbits)), orbits.orbit)),
+            shape=(len(orbits), orbits.n_orbits),
+        )
+        for start in range(0, len(h), tile):
+            hs = h[start : start + tile]
+            X = np.cos(2 * np.pi * hs @ d.T)
+            if thermal:
+                Q6 = _quadratic_components(structure.Q(hs @ W))
+                dw = np.exp(-0.5 * Q6 @ U6.T)
+                X *= dw[:, orbits.i] * dw[:, orbits.j]
+            A[start : start + tile] += (S.T @ X.T).T
+    return A / len(operators)
+
+
+def size_effect_design_matrix(
+    h,
+    orbits,
+    vectors,
+    sites,
+    structure,
+    widths=None,
+    thermal=True,
+    b=None,
+    max_elements=2**22,
+    operators=None,
+    projection=None,
+):
+    r"""
+    Intensity per unit size-effect coefficient.
+
+    To first order in the displacement :math:`\mathbf{v} = n\mathbf{u}`
+    of present atoms, the occupation-displacement cross term is
+
+    .. math::
+
+        I_\mathrm{size}(\mathbf{Q}) = -\sum_p b_i b_j\,
+        (\mathbf{Q} \cdot \boldsymbol{\sigma}_p)
+        \sin(2\pi\, \mathbf{h} \cdot \mathbf{d}_p),
+        \qquad
+        \boldsymbol{\sigma}_p = \langle \delta n_i(\mathbf{0})\,
+        \mathbf{v}_j(\mathbf{R}) \rangle
+        - \langle \mathbf{v}_i(\mathbf{0})\,
+        \delta n_j(\mathbf{R}) \rangle,
+
+    with :math:`\boldsymbol{\sigma}_p = \sum_k \theta_k
+    \mathbf{v}_{pk}` from :func:`~discordant_parsimony.symmetry.vector_orbits`.
+    It is odd in :math:`\mathbf{Q} - \mathbf{G}` about Bragg positions
+    (asymmetric diffuse) and grows linearly with :math:`|\mathbf{Q}|`.
+    Debye-Waller, bin and symmetry averaging follow
+    :func:`design_matrix`.
+
+    Parameters
+    ----------
+    h : array_like, (m, 3)
+        Miller indices in r.l.u.
+    orbits : PairOrbits
+    vectors : VectorOrbits
+    sites : Sites
+    structure : Structure
+    widths, thermal, b, max_elements, operators, projection
+        As for :func:`design_matrix`.
+
+    Returns
+    -------
+    A : ndarray, (m, len(vectors))
+        Columns in units of intensity per Angstrom of coefficient.
+
+    """
+
+    from scipy.sparse import csr_matrix
+
+    from discordant_parsimony.symmetry import vector_slots
+
+    h = np.asarray(h, dtype=float).reshape(-1, 3)
+    b = sites.b if b is None else np.asarray(b)
+    if operators is None or len(operators) == 0:
+        operators = [np.eye(3)]
+    index, value = vector_slots(vectors, len(orbits))
+    U6 = _tensor_components(sites.U)
+    tile = max(1, max_elements // max(1, 3 * len(orbits)))
+
+    A = np.zeros((len(h), len(vectors)))
+    for W in operators:
+        W = np.asarray(W, dtype=float)
+        d_rot = orbits.d @ W.T  # (h W) . d = h . (W d)
+        w = b[orbits.i] * b[orbits.j]
+        if widths is not None:
+            w = w * bin_factor(d_rot, widths, projection)
+        for start in range(0, len(h), tile):
+            hs = h[start : start + tile]
+            hw = hs @ W
+            X = -np.sin(2 * np.pi * hw @ orbits.d.T) * w
+            if thermal:
+                Q6 = _quadratic_components(structure.Q(hw))
+                dw = np.exp(-0.5 * Q6 @ U6.T)
+                X *= dw[:, orbits.i] * dw[:, orbits.j]
+            Q = structure.Q(hw)
+            for s in range(index.shape[1]):
+                k = index[:, s]
+                used = k >= 0
+                proj = Q @ value[used, s].T  # (t, pairs)
+                S = csr_matrix(
+                    (np.ones(used.sum()), (np.arange(used.sum()), k[used])),
+                    shape=(used.sum(), len(vectors)),
+                )
+                A[start : start + tile] += (S.T @ (X[:, used] * proj).T).T
+    return A / len(operators)

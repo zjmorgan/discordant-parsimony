@@ -85,3 +85,14 @@ def test_fixed_cluster_orbits_match_independent_model(tetragonal):
     assert np.isclose(value[0], 0.25 - 0.25**2) or np.isclose(
         value[0], 0.5 - 0.5**2
     )
+
+
+def test_radial_background_basis():
+    from discordant_parsimony.refine import radial_background_basis
+
+    knots = np.linspace(0, 10, 11)
+    Q = np.random.default_rng(0).random(500) * 10
+    B = radial_background_basis(Q, knots)
+    assert np.allclose(B.sum(axis=1), 1)
+    values = np.sin(knots) + knots
+    assert np.allclose(B @ values, np.interp(Q, knots, values))

@@ -45,3 +45,42 @@ def test_axis_order_and_reduction(tmp_path):
     assert np.allclose(volume.widths, [0.5, 2 / 3, 1.0])
     index = volume.index(np.array([[0.1, -0.9, 0.5]]))
     assert np.allclose(volume.hkl(index), [[0.25, -2 / 3, 0.5]])
+
+
+def test_reduction_without_background(tmp_path):
+    rng = np.random.default_rng(1)
+    shape = (3, 2, 2)
+    edges = [np.linspace(-1, 1, n + 1) for n in shape]
+    d, n = rng.random(shape) + 0.5, rng.random(shape) + 0.5
+    n[0, 0, 0] = 0
+    write_mdhisto(tmp_path / "d.nxs", d, d / 10, edges)
+    write_mdhisto(tmp_path / "n.nxs", n, n / 10, edges)
+    volume = reduce_volume(tmp_path / "d.nxs", tmp_path / "n.nxs")
+    valid = n > 0
+    assert np.all(np.isnan(volume.signal[~valid]))
+    dv, nv = d[valid], n[valid]
+    assert np.allclose(volume.signal[valid], dv / nv)
+    assert np.allclose(volume.sigma[valid] ** 2, dv / 10 / nv**2)
+    with pytest.raises(ValueError):
+        reduce_volume(
+            tmp_path / "d.nxs", tmp_path / "n.nxs", tmp_path / "d.nxs"
+        )
+
+
+def test_lattice_and_with_cell(tmp_path, tetragonal):
+    from discordant_parsimony.io import load_lattice
+
+    path = tmp_path / "lattice.nxs"
+    with h5py.File(path, "w") as f:
+        base = "MDHistoWorkspace/experiment0/sample/oriented_lattice/"
+        for k, v in zip(
+            ("a", "b", "c", "alpha", "beta", "gamma"),
+            (5.1, 5.1, 4.2, 90, 90, 90),
+        ):
+            f.create_dataset(base + "unit_cell_" + k, data=[v])
+    cell = load_lattice(path)
+    assert cell == (5.1, 5.1, 4.2, 90, 90, 90)
+    moved = tetragonal.with_cell(cell)
+    assert np.allclose(np.linalg.norm(moved.A, axis=0), [5.1, 5.1, 4.2])
+    a, b = tetragonal.sites(), moved.sites()
+    assert np.allclose(a.x, b.x) and np.allclose(a.U, b.U)

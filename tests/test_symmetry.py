@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from discordant_parsimony.correlations import independent_cluster_covariance
 from discordant_parsimony.rules import find_clusters
@@ -79,3 +80,17 @@ def test_tb5ru6sn18_orbits(tb5ru6sn18):
     assert len(self_orbits) == 3
     # every orbit's pair count divides the group-and-reversal size
     assert np.all((2 * 192) % np.bincount(orbits.orbit) == 0)
+
+
+def test_cylinder_extends_pairs_along_unique_axis(tetragonal):
+    sites = tetragonal.sites().select(["A1", "A2"])
+    sphere = pair_orbits(tetragonal, sites, 6.0)
+    tube = pair_orbits(tetragonal, sites, 6.0, cylinder=((0, 0, 1), 1.0, 20.0))
+    assert len(tube) > len(sphere)
+    r = tube.d @ tetragonal.A.T
+    long = np.linalg.norm(r, axis=1) > 6.0 + 1e-6
+    assert np.all(np.hypot(r[long, 0], r[long, 1]) <= 1.0 + 1e-6)
+    assert np.abs(r[long, 2]).max() > 15
+    # a cylinder along a direction the 4-fold axis does not preserve
+    with pytest.raises(ValueError):
+        pair_orbits(tetragonal, sites, 3.0, cylinder=((1, 0, 0), 0.5, 20.0))

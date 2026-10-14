@@ -66,3 +66,25 @@ def test_independent_clusters_match_sampling(tetragonal):
     zero = np.flatnonzero(np.all(R == 0, axis=1))[0]
     assert np.allclose(C[zero], C0[0], atol=0.02)
     assert np.allclose(np.delete(C, zero, axis=0), 0, atol=0.02)
+
+
+def test_realizability_bounds_contain_any_configuration(tetragonal):
+    from discordant_parsimony.correlations import realizability_bounds
+    from discordant_parsimony.symmetry import orbit_average, pair_orbits
+
+    sites = tetragonal.sites().select(["A1", "A2"])
+    clusters = find_clusters(tetragonal, sites, 1.0)
+    orbits = pair_orbits(tetragonal, sites, 6.0)
+    lower, upper = realizability_bounds(orbits, sites, clusters)
+    assert np.all(lower <= upper)
+    rng = np.random.default_rng(6)
+    # perfectly correlated and perfectly anticorrelated extremes stay inside
+    occupation = np.zeros((2, 5, 5, 5, len(sites)))
+    for cluster in clusters:
+        a, b = cluster.members
+        z = rng.random((2, 5, 5, 5))
+        occupation[..., a] = z < 0.25
+        occupation[..., b] = (z >= 0.25) & (z < 0.75)
+    R, C = covariance_from_configurations(occupation, 2, mean=sites.occupancy)
+    c = orbit_average(orbits, R, C)
+    assert np.all(c >= lower - 0.05) and np.all(c <= upper + 0.05)

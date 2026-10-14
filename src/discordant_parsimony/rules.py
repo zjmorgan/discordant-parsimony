@@ -1,13 +1,17 @@
 """Local occupation rules derived from the average structure geometry.
 
-Two kinds of rule are identified from interatomic contacts among the
-participating positions:
+Positions closer than a grouping distance belong to one cluster, of one
+of two kinds decided by their occupancies:
 
-* split-site clusters: positions closer than ``cluster_distance`` are
-  alternatives, at most one of which is occupied (an atom and its split
-  partners, or a site and its substituent);
-* forbidden contacts: pairs of positions in different clusters closer
-  than a physically allowed distance, which cannot both be occupied.
+* exclusive (split-site) clusters, occupancies summing to at most one:
+  alternatives of which at most one is occupied (an atom and its split
+  partners, or two species sharing a site);
+* co-occupied units, equal occupancies summing to more than one: atoms
+  present or absent together with one shared occupation variable (a
+  partially occupied molecule such as a carbonate group).
+
+Forbidden contacts are pairs of positions in different clusters closer
+than a physically allowed distance, which cannot both be occupied.
 """
 
 import collections
@@ -113,7 +117,7 @@ def find_contacts(structure, sites, max_distance):
 @dataclass
 class Cluster:
     """
-    Split-site cluster: alternative positions, at most one occupied.
+    Group of nearby positions with a common occupation rule.
 
     Attributes
     ----------
@@ -123,20 +127,31 @@ class Cluster:
         Cell offset of each member relative to the first.
     vacancy : float
         Probability that no member is occupied.
+    kind : str
+        ``"exclusive"`` (at most one member occupied) or
+        ``"co-occupied"`` (all members occupied together).
 
     """
 
     members: np.ndarray
     offsets: np.ndarray
     vacancy: float
+    kind: str = "exclusive"
 
     def __len__(self):
         return len(self.members)
 
 
-def find_clusters(structure, sites, cluster_distance, tol=1e-3):
+def find_clusters(
+    structure,
+    sites,
+    cluster_distance,
+    tol=1e-3,
+    occupancy_tol=0.02,
+    min_bond=0.9,
+):
     """
-    Group positions into mutually exclusive split-site clusters.
+    Group nearby positions into exclusive clusters or co-occupied units.
 
     Parameters
     ----------
@@ -145,9 +160,14 @@ def find_clusters(structure, sites, cluster_distance, tol=1e-3):
     sites : Sites
         Participating positions.
     cluster_distance : float
-        Positions closer than this (Angstrom) are alternatives.
+        Positions closer than this (Angstrom) are grouped.
     tol : float, optional
-        Tolerance on the occupancy sum of a cluster.
+        Tolerance on the occupancy sum of an exclusive cluster.
+    occupancy_tol : float, optional
+        Largest occupancy difference within a co-occupied unit.
+    min_bond : float, optional
+        Shortest distance (Angstrom) at which two atoms of a co-occupied
+        unit can both be present.
 
     Returns
     -------
@@ -157,8 +177,9 @@ def find_clusters(structure, sites, cluster_distance, tol=1e-3):
     Raises
     ------
     ValueError
-        If a connected group is not a clique of alternatives or its
-        occupancies sum to more than one.
+        If an exclusive group is not a clique of alternatives, or a
+        group with occupancies summing to more than one has unequal
+        occupancies (neither alternatives nor one rigid unit).
 
     """
 
@@ -190,12 +211,27 @@ def find_clusters(structure, sites, cluster_distance, tol=1e-3):
             :, None
         ]
         d = structure.distance(dx)
-        if np.any(d[~np.eye(len(members), dtype=bool)] >= cluster_distance):
-            raise ValueError(f"Cluster {members} is not a clique")
-        total = sites.occupancy[members].sum()
-        if total > 1 + tol:
-            raise ValueError(f"Cluster {members} occupancy {total:.4f} > 1")
-        clusters.append(Cluster(members, offsets, max(0.0, 1 - total)))
+        x = sites.occupancy[members]
+        if x.sum() <= 1 + tol:
+            off_diagonal = ~np.eye(len(members), dtype=bool)
+            if np.any(d[off_diagonal] >= cluster_distance):
+                raise ValueError(f"Cluster {members} is not a clique")
+            vacancy = max(0.0, 1 - x.sum())
+            clusters.append(Cluster(members, offsets, vacancy))
+        elif np.ptp(x) <= occupancy_tol:
+            off_diagonal = ~np.eye(len(members), dtype=bool)
+            if np.any(d[off_diagonal] < min_bond):
+                raise ValueError(
+                    f"Group {members} sums to occupancy {x.sum():.4f} > 1"
+                    f" but has atoms closer than {min_bond} A"
+                )
+            vacancy = 1 - x.mean()
+            clusters.append(Cluster(members, offsets, vacancy, "co-occupied"))
+        else:
+            raise ValueError(
+                f"Group {members} has occupancies {np.round(x, 4)}: neither"
+                " alternatives (sum <= 1) nor one co-occupied unit"
+            )
     return clusters
 
 

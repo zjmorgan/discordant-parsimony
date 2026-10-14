@@ -6,7 +6,7 @@ from discordant_parsimony import Structure
 from discordant_parsimony.io import data_root
 
 FIXTURES = Path(__file__).parent / "fixtures"
-TB5RU6SN18 = data_root() / "Tb5Ru6Sn18"
+TB5RU6SN18 = data_root() / "Tb5Ru6Sn18_293K"
 
 requires_tb5ru6sn18 = pytest.mark.skipif(
     not (TB5RU6SN18 / "Tb5Ru6Sn18.cif").exists(),

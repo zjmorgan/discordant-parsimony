@@ -3,6 +3,9 @@ r"""Exact linear constraints on orbit coefficients and their solution.
 Two kinds of relation are imposed, both independent of any model of the
 local order:
 
+* unit rules: members of a co-occupied unit (e.g. a carbonate group)
+  share one occupation variable, so their covariances with any position
+  are equal;
 * sum rules: a split-site cluster without vacancies always holds exactly
   one atom, so the fluctuations of its members sum to zero and their
   covariances with any position sum to zero,
@@ -54,7 +57,11 @@ def sum_rule_rows(orbits, clusters, vacancy_tol=1e-3):
     lookup = _pair_lookup(orbits)
     rows = set()
     for cluster in clusters:
-        if cluster.vacancy > vacancy_tol or len(cluster) < 2:
+        if (
+            cluster.kind != "exclusive"
+            or cluster.vacancy > vacancy_tol
+            or len(cluster) < 2
+        ):
             continue
         a0, o0 = cluster.members[0], cluster.offsets[0]
         for j, R0 in zip(orbits.j[orbits.i == a0], orbits.R[orbits.i == a0]):
@@ -71,6 +78,48 @@ def sum_rule_rows(orbits, clusters, vacancy_tol=1e-3):
     for r, row in enumerate(rows):
         for o, v in row:
             M[r, o] = v
+    return M
+
+
+def unit_rows(orbits, clusters):
+    """
+    Equality constraints of co-occupied units.
+
+    Members of a co-occupied unit share one occupation variable, so for
+    every member ``a`` and position ``j`` in cell ``R``,
+    ``C(a @ o_a, j @ R) = C(a0 @ o_a0, j @ R)``.
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+        Pairs and their orbits.
+    clusters : list of Cluster
+        Clusters covering all positions.
+
+    Returns
+    -------
+    rows : ndarray, (r, n_orbits)
+        Each row ``M`` states ``M @ c = 0``. Rows that would involve
+        pairs beyond the cutoff are omitted.
+
+    """
+
+    lookup = _pair_lookup(orbits)
+    rows = set()
+    for cluster in clusters:
+        if cluster.kind != "co-occupied" or len(cluster) < 2:
+            continue
+        a0, o0 = cluster.members[0], cluster.offsets[0]
+        for j, R0 in zip(orbits.j[orbits.i == a0], orbits.R[orbits.i == a0]):
+            R = R0 + o0
+            ref = lookup[(a0, j, tuple(R0))]
+            for a, oa in zip(cluster.members[1:], cluster.offsets[1:]):
+                o = lookup.get((a, j, tuple(R - oa)))
+                if o is not None and o != ref:
+                    rows.add((min(o, ref), max(o, ref)))
+    M = np.zeros((len(rows), orbits.n_orbits))
+    for r, (o, ref) in enumerate(sorted(rows)):
+        M[r, o], M[r, ref] = 1, -1
     return M
 
 
@@ -200,4 +249,30 @@ def parameterize(n_orbits, fixed=None, rows=None, tol=1e-3):
         basis = null_space(Mf)
         N = np.zeros((n_orbits, basis.shape[1]))
         N[free] = basis
+    return Parameterization(c0, N, residual)
+
+
+def stack_parameterizations(*parts):
+    """
+    Combine independent coefficient blocks into one parameterization.
+
+    Parameters
+    ----------
+    *parts : Parameterization
+        Blocks in column order, e.g. occupational orbit coefficients
+        then size-effect vector coefficients.
+
+    Returns
+    -------
+    parameterization : Parameterization
+        ``c = c0 + N theta`` over the concatenated coefficients, with a
+        block-diagonal ``N``.
+
+    """
+
+    from scipy.linalg import block_diag
+
+    c0 = np.concatenate([p.c0 for p in parts])
+    N = block_diag(*[p.N for p in parts])
+    residual = max(p.residual for p in parts)
     return Parameterization(c0, N, residual)

@@ -105,8 +105,8 @@ class PairOrbits:
         return first
 
 
-def pair_orbits(structure, sites, max_distance, tol=1e-6):
-    """
+def pair_orbits(structure, sites, max_distance, cylinder=None, tol=1e-6):
+    r"""
     All pairs up to a distance, grouped into symmetry orbits.
 
     Parameters
@@ -117,6 +117,13 @@ def pair_orbits(structure, sites, max_distance, tol=1e-6):
         Participating positions, closed under the operators.
     max_distance : float
         Pair distance cutoff in Angstrom (self pairs included).
+    cylinder : tuple, optional
+        ``(axis, radius, half_length)`` adding pairs whose vector lies
+        within ``radius`` (Angstrom) of the direction ``axis``
+        (fractional, e.g. ``(0, 0, 1)``) and within ``half_length`` along
+        it. Use it for correlations that are long-ranged along chains or
+        columns but short across them; the cylinder must be invariant
+        under the point group (e.g. along a unique axis).
     tol : float, optional
         Distance tolerance at the cutoff.
 
@@ -124,13 +131,35 @@ def pair_orbits(structure, sites, max_distance, tol=1e-6):
     -------
     orbits : PairOrbits
 
+    Raises
+    ------
+    ValueError
+        If the selected pair set is not closed under the symmetry, e.g.
+        a cylinder along a direction the point group does not preserve.
+
     """
 
-    n = np.ceil(max_distance * np.linalg.norm(structure.B, axis=0)) + 1
+    reach = (
+        max_distance
+        if cylinder is None
+        else max(max_distance, cylinder[1], cylinder[2])
+    )
+    n = np.ceil(reach * np.linalg.norm(structure.B, axis=0)) + 1
     ranges = [np.arange(-k, k + 1) for k in n.astype(int)]
     T = np.stack(np.meshgrid(*ranges, indexing="ij"), -1).reshape(-1, 3)
     dx = sites.x[None, :, None] - sites.x[:, None, None] + T
-    i, j, k = np.nonzero(structure.distance(dx) <= max_distance + tol)
+    inside = structure.distance(dx) <= max_distance + tol
+    if cylinder is not None:
+        axis, radius, half_length = cylinder
+        u = structure.A @ np.asarray(axis, dtype=float)
+        u = u / np.linalg.norm(u)
+        r = dx @ structure.A.T
+        along = r @ u
+        across = np.linalg.norm(r - along[..., None] * u, axis=-1)
+        inside |= (across <= radius + tol) & (
+            np.abs(along) <= half_length + tol
+        )
+    i, j, k = np.nonzero(inside)
     R = T[k]
 
     span = 2 * int(np.abs(R).max()) + 2 * int(np.max(n)) + 3
@@ -239,3 +268,227 @@ def orbit_pair_terms(orbits, sites, c, thermal=True, b=None):
     w = b[orbits.i] * b[orbits.j] * np.asarray(c)[orbits.orbit]
     U = sites.U[orbits.i] + sites.U[orbits.j] if thermal else None
     return PairTerms(orbits.d, w, U)
+
+
+def pair_images(orbits, structure, sites):
+    """
+    Index of the image of every pair under each operator, and its reverse.
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+        A pair set closed under the operators and reversal.
+    structure : Structure
+    sites : Sites
+
+    Returns
+    -------
+    image : ndarray of int, (g, m)
+        ``image[g, p]`` is the pair that operator ``g`` maps ``p`` to.
+    reverse : ndarray of int, (m,)
+        Index of the reversed pair ``(j, i, -R)``.
+
+    """
+
+    n = len(sites)
+    span = 2 * int(np.abs(orbits.R).max()) + 1
+    offset = span // 2
+
+    def encode(i, j, R):
+        Rc = R + offset
+        cell = (Rc[:, 0] * span + Rc[:, 1]) * span + Rc[:, 2]
+        return (i * n + j) * span**3 + cell
+
+    key = encode(orbits.i, orbits.j, orbits.R)
+    order = np.argsort(key)
+
+    def find(k):
+        pos = np.searchsorted(key[order], k)
+        pos = np.minimum(pos, len(key) - 1)
+        if not np.all(key[order][pos] == k):
+            raise ValueError("Pair set not closed under symmetry")
+        return order[pos]
+
+    perm, shift = position_permutations(structure, sites)
+    image = np.empty((len(structure.operators), len(orbits)), int)
+    for g, (W, _) in enumerate(structure.operators):
+        Wi = np.rint(W).astype(int)
+        Rp = orbits.R @ Wi.T + shift[g, orbits.j] - shift[g, orbits.i]
+        image[g] = find(encode(perm[g, orbits.i], perm[g, orbits.j], Rp))
+    reverse = find(encode(orbits.j, orbits.i, -orbits.R))
+    return image, reverse
+
+
+@dataclass
+class VectorOrbits:
+    r"""
+    Symmetry-adapted antisymmetric vector coefficients on pair orbits.
+
+    Each refined coefficient :math:`\theta_k` multiplies a basis vector
+    field: pair :math:`p` carries the Cartesian vector
+    ``vectors[p, k]`` (zero outside the coefficient's orbit), with
+    :math:`\boldsymbol{\sigma}_{g p} = R_g \boldsymbol{\sigma}_p` under
+    symmetry and :math:`\boldsymbol{\sigma}_{\bar p} =
+    -\boldsymbol{\sigma}_p` under pair reversal.
+
+    Attributes
+    ----------
+    orbit : ndarray of int, (k,)
+        Orbit of each coefficient.
+    pairs : list of ndarray
+        Pair indices of each coefficient's orbit.
+    vectors : list of ndarray
+        ``(len(pairs[k]), 3)`` Cartesian basis vectors.
+
+    """
+
+    orbit: np.ndarray
+    pairs: list
+    vectors: list
+
+    def __len__(self):
+        return len(self.orbit)
+
+
+def vector_orbits(orbits, structure, sites, exclude=(), axis=None):
+    """
+    Basis of antisymmetric pair vectors allowed by symmetry.
+
+    Used for size-effect coefficients
+    ``<dn_i(0) v_j(R)> - <v_i(0) dn_j(R)>``, which change sign under
+    pair reversal and rotate with the operators.
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+    structure : Structure
+    sites : Sites
+    exclude : sequence of int, optional
+        Orbits without vector coefficients (e.g. within one cluster).
+    axis : array_like, (3,), optional
+        Restrict displacements to this fractional direction (e.g.
+        ``(0, 0, 1)`` for motion along a chain); the restriction must be
+        compatible with the symmetry.
+
+    Returns
+    -------
+    vectors : VectorOrbits
+
+    """
+
+    from scipy.linalg import null_space
+
+    image, reverse = pair_images(orbits, structure, sites)
+    Ainv = np.linalg.inv(structure.A)
+    rot = [structure.A @ W @ Ainv for W, _ in structure.operators]
+    if axis is not None:
+        u = structure.A @ np.asarray(axis, float)
+        u = u / np.linalg.norm(u)
+    reps = orbits.representatives()
+    excluded = set(np.atleast_1d(exclude).tolist())
+
+    orbit_of, pairs_of, vectors_of = [], [], []
+    for o, p0 in enumerate(reps):
+        if o in excluded:
+            continue
+        rows, mapping = [], {}
+        for g, R in enumerate(rot):
+            for sign, q in ((1, image[g, p0]), (-1, reverse[image[g, p0]])):
+                if q == p0:
+                    rows.append(R - sign * np.eye(3))
+                mapping.setdefault(q, sign * R)
+        if axis is not None:
+            rows.append(np.eye(3) - np.outer(u, u))
+        basis = null_space(np.vstack(rows)) if rows else np.eye(3)
+        members = np.array(sorted(mapping))
+        for k in range(basis.shape[1]):
+            v = np.array([mapping[q] @ basis[:, k] for q in members])
+            orbit_of.append(o)
+            pairs_of.append(members)
+            vectors_of.append(v)
+    return VectorOrbits(np.array(orbit_of, int), pairs_of, vectors_of)
+
+
+def vector_slots(vectors, n_pairs):
+    """
+    Compact per-pair view of vector coefficients.
+
+    Returns
+    -------
+    index : ndarray of int, (m, s)
+        Coefficient indices carried by each pair (``-1`` padding).
+    value : ndarray, (m, s, 3)
+        The corresponding Cartesian basis vectors.
+
+    """
+
+    slots = np.zeros(n_pairs, int)
+    for p in vectors.pairs:
+        slots[p] += 1
+    s = max(1, int(slots.max()))
+    index = np.full((n_pairs, s), -1)
+    value = np.zeros((n_pairs, s, 3))
+    fill = np.zeros(n_pairs, int)
+    for k, (p, v) in enumerate(zip(vectors.pairs, vectors.vectors)):
+        index[p, fill[p]] = k
+        value[p, fill[p]] = v
+        fill[p] += 1
+    return index, value
+
+
+def rigid_unit_vector_rows(orbits, vectors, clusters):
+    """
+    Ties making co-occupied units move and fluctuate as rigid wholes.
+
+    In a co-occupied unit the members share one occupation variable and,
+    for a rigid molecule, one displacement, so the size-effect vector of
+    every member pair between two units is the same. Ties are imposed at
+    the representative pair of each orbit (the vector fields are
+    covariant, so this suffices).
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+    vectors : VectorOrbits
+    clusters : list of Cluster
+
+    Returns
+    -------
+    rows : ndarray, (r, len(vectors))
+        Each row ``M`` states ``M @ theta = 0``.
+
+    """
+
+    index, value = vector_slots(vectors, len(orbits))
+    lookup = {
+        (i, j, tuple(R)): p
+        for p, (i, j, R) in enumerate(zip(orbits.i, orbits.j, orbits.R))
+    }
+    unit = {}
+    for c in clusters:
+        if c.kind == "co-occupied":
+            for m, o in zip(c.members, c.offsets):
+                unit[m] = (c.members[0], c.offsets[0], o)
+
+    def sigma(p):
+        M = np.zeros((3, len(vectors)))
+        for k, v in zip(index[p], value[p]):
+            if k >= 0:
+                M[:, k] += v
+        return M
+
+    rows = []
+    for p in orbits.representatives():
+        i, j, R = orbits.i[p], orbits.j[p], orbits.R[p]
+        a0, oa0, oa = unit.get(i, (i, 0, 0))
+        b0, ob0, ob = unit.get(j, (j, 0, 0))
+        if (a0, b0) == (i, j):
+            continue
+        ref = lookup.get((a0, b0, tuple(R + oa - oa0 - ob + ob0)))
+        if ref is None or ref == p:
+            continue
+        rows.append(sigma(p) - sigma(ref))
+    if not rows:
+        return np.zeros((0, len(vectors)))
+    M = np.vstack(rows)
+    return M[np.any(np.abs(M) > 1e-12, axis=1)]

@@ -74,16 +74,19 @@ class PairTerms:
         U = self.U[keep] if self.U is not None else None
         return PairTerms(self.d[keep], self.w[keep], U)
 
-    def bin_average(self, widths):
+    def bin_average(self, widths, projection=None):
         r"""
-        Average over rectangular reciprocal-space bins.
+        Average over the histogram bins of a measured volume.
 
-        Averaging :math:`e^{2\pi i \mathbf{h} \cdot \mathbf{d}}` over a bin
-        of widths :math:`\Delta h_a` in r.l.u. multiplies each term by
+        A bin spans widths :math:`\Delta u_a` along the volume axes, with
+        Miller indices :math:`\mathbf{h} = W\mathbf{u}`. Averaging
+        :math:`e^{2\pi i \mathbf{h} \cdot \mathbf{d}}` over it multiplies
+        each term by
 
         .. math::
 
-            \prod_a \operatorname{sinc}(\Delta h_a d_a), \qquad
+            \prod_a \operatorname{sinc}\!\left(\Delta u_a\,
+            (W^\mathsf{T}\mathbf{d})_a\right), \qquad
             \operatorname{sinc}(x) = \frac{\sin \pi x}{\pi x}.
 
         This is exact for point terms and neglects the variation of the
@@ -92,7 +95,10 @@ class PairTerms:
         Parameters
         ----------
         widths : array_like, (3,)
-            Bin widths along h, k, l in r.l.u.
+            Bin widths along the volume axes.
+        projection : ndarray, (3, 3), optional
+            Projection matrix :math:`W` (``Volume.W``); identity, i.e.
+            axes along h, k, l, by default.
 
         Returns
         -------
@@ -100,7 +106,9 @@ class PairTerms:
 
         """
 
-        factor = np.prod(np.sinc(np.asarray(widths) * self.d), axis=1)
+        from discordant_parsimony.scattering.numpy_backend import bin_factor
+
+        factor = bin_factor(self.d, widths, projection)
         return PairTerms(self.d, self.w * factor, self.U)
 
     def merge(self, decimals=8):

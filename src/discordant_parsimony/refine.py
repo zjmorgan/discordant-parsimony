@@ -115,6 +115,39 @@ def background_basis(Q, degree=1):
     return np.stack([q2**n for n in range(degree + 1)], 1)
 
 
+def radial_background_basis(Q, knots):
+    r"""
+    Piecewise-linear isotropic background in :math:`|\mathbf{Q}|`.
+
+    Hat functions on the given knots form a partition of unity, so any
+    background that depends only on :math:`|\mathbf{Q}|`, including
+    powder rings from the sample environment, is represented to the
+    resolution of the knot spacing. Use it when no background
+    measurement was subtracted.
+
+    Parameters
+    ----------
+    Q : ndarray, (m,)
+        :math:`|\mathbf{Q}|` in inverse Angstrom.
+    knots : ndarray, (k,)
+        Increasing knot positions spanning the range of ``Q``.
+
+    Returns
+    -------
+    B : ndarray, (m, k)
+
+    """
+
+    Q = np.asarray(Q, dtype=float)
+    knots = np.asarray(knots, dtype=float)
+    B = np.zeros((len(Q), len(knots)))
+    for k in range(len(knots)):
+        e = np.zeros(len(knots))
+        e[k] = 1
+        B[:, k] = np.interp(Q, knots, e)
+    return B
+
+
 def refine(
     y,
     sigma,
@@ -207,7 +240,7 @@ def refine(
         block = cov[offset : offset + k, offset : offset + k]
     esd = np.sqrt(np.maximum(np.einsum("na,ab,nb->n", J, block, J), 0))
 
-    free = np.any(N != 0, axis=1)
+    free = np.any(np.abs(N) > 1e-10, axis=1)
     beta = p[offset + k :]
     beta_esd = np.sqrt(np.diag(cov)[offset + k :])
     return Refinement(

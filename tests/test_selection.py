@@ -88,3 +88,108 @@ def test_canonical_is_shared_by_equivalents(fcc):
     rep = canonical(h, fcc)
     for W in laue_operators(fcc)[::7]:
         assert np.allclose(canonical(h @ W, fcc), rep)
+
+
+@pytest.fixture
+def p_6():
+    """Space group P-6 (Laue class 6/m) in the hexagonal setting."""
+
+    from discordant_parsimony.structure import parse_symop
+
+    ops = [
+        "x, y, z",
+        "-y, x-y, z",
+        "-x+y, -x, z",
+        "x, y, -z",
+        "-y, x-y, -z",
+        "-x+y, -x, -z",
+    ]
+    return Structure(
+        (9.7, 9.7, 9.6, 90, 90, 120), [parse_symop(o) for o in ops], []
+    )
+
+
+def test_extra_operators_close_the_laue_group(p_6):
+    from discordant_parsimony.selection import coset_operators
+
+    assert len(laue_operators(p_6)) == 12  # 6/m
+    assert len(laue_operators(p_6, ["y, x, z"])) == 24  # 6/mmm
+    W = coset_operators(p_6, ["y, x, z"])
+    assert len(W) == 2 and np.array_equal(W[0], np.eye(3))
+
+
+def test_fundamental_domain_counts_orbits(p_6):
+    from discordant_parsimony.selection import in_fundamental_domain
+
+    g = np.arange(-3, 4)
+    h = np.stack(np.meshgrid(g, g, g, indexing="ij"), -1).reshape(-1, 3)
+    extra = ["y, x, z"]
+    keep = in_fundamental_domain(h, p_6, extra)
+    W = laue_operators(p_6, extra)
+    # a cube of indices is not closed under hexagonal rotations: count
+    # the orbits whose canonical representative lies inside it
+    grid = set(map(tuple, h.tolist()))
+    reps = {tuple(r) for r in canonical(h.astype(float), p_6, extra=extra)}
+    expected = {r for r in reps if r in grid}
+    kept = h[keep].astype(int)
+    assert keep.sum() == len(expected)
+    kept_orbits = {frozenset(map(tuple, (p @ W).tolist())) for p in kept}
+    assert len(kept_orbits) == len(kept)
+
+
+def test_twin_averaged_design_matrix(p_6):
+    """Averaging over coset representatives makes the model invariant
+    under the extra operator."""
+
+    from discordant_parsimony import Structure
+    from discordant_parsimony.scattering import design_matrix
+    from discordant_parsimony.selection import coset_operators
+    from discordant_parsimony.structure import parse_symop
+    from discordant_parsimony.symmetry import pair_orbits
+
+    ops = [W for W, _ in p_6.operators]
+    site = {
+        "label": "X1",
+        "species": "C",
+        "occupancy": 0.5,
+        "x": np.array([0.31, 0.12, 0.2]),
+        "U": 0.01 * np.eye(3),
+    }
+    structure = Structure(p_6.cell, p_6.operators, [site])
+    sites = structure.sites()
+    orbits = pair_orbits(structure, sites, 6.0)
+    rng = np.random.default_rng(0)
+    h = rng.normal(size=(10, 3)) * 2
+    c = rng.normal(size=orbits.n_orbits)
+    W = coset_operators(structure, ["y, x, z"])
+    A = design_matrix(h, orbits, sites, structure, operators=W)
+    mirror = parse_symop("y, x, z")[0].astype(int)
+    A_m = design_matrix(h @ mirror, orbits, sites, structure, operators=W)
+    assert np.allclose(A @ c, A_m @ c)
+    plain = design_matrix(h, orbits, sites, structure)
+    plain_m = design_matrix(h @ mirror, orbits, sites, structure)
+    assert not np.allclose(plain @ c, plain_m @ c)
+
+
+def test_powder_ring_mask_finds_rings():
+    from discordant_parsimony.selection import powder_ring_mask
+
+    rng = np.random.default_rng(0)
+    Q = rng.random(200000) * 10
+    y = 1 + 0.1 * Q + rng.normal(0, 0.05, len(Q))
+    for q0 in (2.5, 6.1):
+        y += 3 * np.exp(-0.5 * ((Q - q0) / 0.01) ** 2)
+    mask, rings = powder_ring_mask(Q, y)
+    assert np.all(np.abs(Q[mask][:, None] - [2.5, 6.1]).min(axis=1) < 0.05)
+    assert mask[np.abs(Q - 2.5) < 0.005].all()
+    assert mask[np.abs(Q - 6.1) < 0.005].all()
+    assert mask.mean() < 0.02
+
+
+def test_with_occupancies(tetragonal):
+    s = tetragonal.with_occupancies({"A1": 0.4})
+    sites = s.sites()
+    assert np.allclose(sites.occupancy[sites.label == "A1"], 0.4)
+    assert np.allclose(sites.occupancy[sites.label == "A2"], 0.5)
+    with pytest.raises(KeyError):
+        tetragonal.with_occupancies({"Z9": 0.1})

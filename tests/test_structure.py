@@ -64,3 +64,65 @@ def test_tb5ru6sn18_sites(tb5ru6sn18):
     composition = [per_cell[s] for s in ("Tb", "Ru", "Sn")]
     assert np.allclose(composition, [20, 24, 72], atol=0.01)
     assert sites.partial() == ["Tb2", "Sn1", "Sn2"]
+
+
+def test_b_iso_is_converted_to_u(tmp_path):
+    from conftest import FIXTURES
+    from discordant_parsimony import Structure
+
+    text = (FIXTURES / "split_tetragonal.cif").read_text()
+    text = text.replace(
+        "_atom_site_U_iso_or_equiv", "_atom_site_B_iso_or_equiv"
+    )
+    path = tmp_path / "b_iso.cif"
+    path.write_text(text)
+    sites = Structure.from_cif(path).sites().select(["A2"])
+    # B = 0.0100 A^2 in the file -> U = B / (8 pi^2)
+    assert np.allclose(sites.U[0], 0.01 / (8 * np.pi**2) * np.eye(3))
+
+
+def test_hexagonal_uani_is_isotropic_in_plane(tmp_path):
+    """On a 3-fold axis U11 = U22 = 2 U12; in a consistent Cartesian
+    frame the tensor must be isotropic in the basal plane, and it must
+    stay so on every symmetry-equivalent position."""
+
+    from discordant_parsimony import Structure
+
+    cif = """data_hex
+_cell_length_a 9.7
+_cell_length_b 9.7
+_cell_length_c 9.6
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 120
+loop_
+_space_group_symop_operation_xyz
+'x, y, z'
+'-y, x-y, z'
+'-x+y, -x, z'
+'-x, -y, -z'
+'y, -x+y, -z'
+'x-y, x, -z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+C1 C 0.3333 0.6667 0.25 0.5
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_23
+_atom_site_aniso_U_13
+_atom_site_aniso_U_12
+C1 0.0200 0.0200 0.0300 0 0 0.0100
+"""
+    path = tmp_path / "hex.cif"
+    path.write_text(cif)
+    sites = Structure.from_cif(path).sites()
+    for U in sites.U:
+        assert np.allclose(U, np.diag([0.02, 0.02, 0.03]), atol=1e-12)

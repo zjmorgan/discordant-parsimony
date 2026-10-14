@@ -152,3 +152,45 @@ def test_participation_scan_finds_correlated_unit(complete_pairs):
     assert models[0].units == ("pairs",)
     assert 0.8 < models[0].chi2_test < 1.2
     assert models[-1].chi2_test > 2
+
+
+def test_unit_rules_hold_for_rigid_groups():
+    """Configurations where each CO3-like group is wholly present or
+    absent satisfy the unit equalities exactly."""
+
+    from discordant_parsimony import Structure
+    from discordant_parsimony.constraints import unit_rows
+
+    a = 6.0
+    r = 1.3 / a
+    group = [("C1", "C", (0.5, 0.5, 0.5))] + [
+        (f"O{k}", "O", (0.5 + r * np.cos(t), 0.5 + r * np.sin(t), 0.5))
+        for k, t in enumerate(np.deg2rad([0, 120, 240]))
+    ]
+    asymmetric = [
+        {
+            "label": l,
+            "species": s,
+            "occupancy": 0.7,
+            "x": np.array(x),
+            "U": 0.01 * np.eye(3),
+        }
+        for l, s, x in group
+    ]
+    structure = Structure(
+        (a, a, a, 90, 90, 90), [(np.eye(3), np.zeros(3))], asymmetric
+    )
+    sites = structure.sites()
+    clusters = find_clusters(structure, sites, 1.5)
+    orbits = pair_orbits(structure, sites, 12.5)
+    rows = unit_rows(orbits, clusters)
+    assert len(rows) > 0
+    rng = np.random.default_rng(5)
+    z = rng.normal(size=(4, 5, 5, 5))
+    present = (z + 0.7 * np.roll(z, 1, axis=3)) > -0.5
+    occupation = np.repeat(present[..., None], len(sites), axis=-1)
+    R, C = covariance_from_configurations(occupation, 2)
+    c = orbit_average(orbits, R, C)
+    assert np.allclose(rows @ c, 0, atol=1e-12)
+    fixed = fixed_cluster_orbits(orbits, sites, clusters)
+    assert np.allclose(fixed[1], 0.7 * 0.3)

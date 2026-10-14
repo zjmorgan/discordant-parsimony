@@ -82,13 +82,41 @@ def covariance_from_configurations(occupation, max_offset, mean=None):
     return R, C
 
 
+def cluster_covariance(sites, cluster):
+    r"""
+    Covariance among the members of one cluster.
+
+    In an exclusive cluster at most one member is occupied, so
+    :math:`C_{ab} = x_a \delta_{ab} - x_a x_b`. In a co-occupied unit
+    all members share one occupation variable with mean :math:`x`, so
+    :math:`C_{ab} = x(1 - x)` for every pair.
+
+    Parameters
+    ----------
+    sites : Sites
+        Participating positions.
+    cluster : Cluster
+
+    Returns
+    -------
+    C : ndarray, (m, m)
+        Covariance between members in the order of ``cluster.members``.
+
+    """
+
+    x = sites.occupancy[cluster.members]
+    if cluster.kind == "co-occupied":
+        xm = x.mean()
+        return np.full((len(x), len(x)), xm * (1 - xm))
+    return np.diag(x) - np.outer(x, x)
+
+
 def independent_cluster_covariance(sites, clusters):
     r"""
-    Covariance of independent split-site clusters (no local order).
+    Covariance of independent clusters (no local order).
 
-    Within a cluster at most one member is occupied, so
-    :math:`C_{ab} = x_a \delta_{ab} - x_a x_b`; different clusters are
-    uncorrelated.
+    Members of one cluster follow :func:`cluster_covariance`; different
+    clusters are uncorrelated.
 
     Parameters
     ----------
@@ -108,8 +136,7 @@ def independent_cluster_covariance(sites, clusters):
 
     entries = {}
     for cluster in clusters:
-        x = sites.occupancy[cluster.members]
-        cov = np.diag(x) - np.outer(x, x)
+        cov = cluster_covariance(sites, cluster)
         for a, (i, oi) in enumerate(zip(cluster.members, cluster.offsets)):
             for c, (j, oj) in enumerate(zip(cluster.members, cluster.offsets)):
                 entries.setdefault(tuple(oj - oi), []).append(
@@ -129,8 +156,8 @@ def fixed_cluster_orbits(orbits, sites, clusters):
     r"""
     Orbit coefficients fixed exactly by the average structure.
 
-    Pairs inside one split-site cluster (including self pairs) have
-    :math:`C_{ab} = x_a \delta_{ab} - x_a x_b`, independent of any local order.
+    Pairs inside one cluster (including self pairs) have the covariance
+    of :func:`cluster_covariance`, independent of any local order.
 
     Parameters
     ----------
@@ -152,15 +179,20 @@ def fixed_cluster_orbits(orbits, sites, clusters):
 
     owner = np.empty(len(sites), int)
     rel = np.empty((len(sites), 3), int)
+    rank = np.empty(len(sites), int)
+    blocks = []
     for k, cluster in enumerate(clusters):
         owner[cluster.members] = k
         rel[cluster.members] = cluster.offsets
+        rank[cluster.members] = np.arange(len(cluster))
+        blocks.append(cluster_covariance(sites, cluster))
     inside = (owner[orbits.i] == owner[orbits.j]) & np.all(
         orbits.R == rel[orbits.j] - rel[orbits.i], axis=1
     )
-    x = sites.occupancy
-    value = np.where(orbits.i == orbits.j, x[orbits.i], 0.0)
-    value = value - x[orbits.i] * x[orbits.j]
+    value = np.zeros(len(orbits))
+    for p in np.flatnonzero(inside):
+        block = blocks[owner[orbits.i[p]]]
+        value[p] = block[rank[orbits.i[p]], rank[orbits.j[p]]]
 
     index = np.unique(orbits.orbit[inside])
     mixed = np.isin(orbits.orbit, index) & ~inside
@@ -175,3 +207,47 @@ def fixed_cluster_orbits(orbits, sites, clusters):
     if np.any(spread > 1e-8):
         raise ValueError("Inconsistent fixed values within an orbit")
     return index, fixed
+
+
+def realizability_bounds(orbits, sites, clusters):
+    r"""
+    Bounds on covariances of 0/1 occupation variables.
+
+    For occupation variables with means :math:`x_i, x_j`,
+
+    .. math::
+
+        \max(0, x_i + x_j - 1) - x_i x_j \le C_{ij}
+        \le \min(x_i, x_j) - x_i x_j .
+
+    A refined coefficient outside these bounds cannot come from any
+    arrangement of atoms with the given average occupancies, which
+    usually means the model is compensating for something it lacks
+    (wrong occupancies, background, or missing contributions).
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+        Pairs and their orbits.
+    sites : Sites
+        Participating positions.
+    clusters : list of Cluster
+        Clusters covering all positions; members of a co-occupied unit
+        share its mean occupancy.
+
+    Returns
+    -------
+    lower, upper : ndarray, (n_orbits,)
+        Bounds of each orbit coefficient.
+
+    """
+
+    x = sites.occupancy.astype(float).copy()
+    for cluster in clusters:
+        if cluster.kind == "co-occupied":
+            x[cluster.members] = 1 - cluster.vacancy
+    reps = orbits.representatives()
+    xi, xj = x[orbits.i[reps]], x[orbits.j[reps]]
+    lower = np.maximum(0, xi + xj - 1) - xi * xj
+    upper = np.minimum(xi, xj) - xi * xj
+    return lower, upper
