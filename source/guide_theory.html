@@ -490,18 +490,85 @@ of time-of-flight data.</p>
 <a class="reference internal" href="discordant_parsimony.html#discordant_parsimony.pairs.thermal_laue_terms" title="discordant_parsimony.pairs.thermal_laue_terms"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermal_laue_terms()</span></code></a> and stored as two
 terms at <span class="math notranslate nohighlight">\(\mathbf{d} = 0\)</span>.</p>
 </section>
+<section id="size-effect-occupation-displacement-correlations">
+<h2>Size effect: occupation-displacement correlations<a class="headerlink" href="#size-effect-occupation-displacement-correlations" title="Link to this heading">#</a></h2>
+<p>Atoms next to a vacancy often relax toward or away from it. Let a
+present atom be displaced by <span class="math notranslate nohighlight">\(\mathbf{u}_i\)</span> from its average
+position and define <span class="math notranslate nohighlight">\(\mathbf{v}_i = n_i\mathbf{u}_i\)</span>, zero when
+the site is empty and zero on average. To first order in the
+displacement the scattering amplitude is</p>
+<div class="math notranslate nohighlight">
+\[a_i = b_i n_i e^{i\mathbf{Q}\cdot\mathbf{u}_i}
+\approx b_i \left(n_i + i\mathbf{Q}\cdot\mathbf{v}_i\right),
+\qquad
+\delta a_i = b_i \left(\delta n_i + i\mathbf{Q}\cdot\mathbf{v}_i\right),\]</div>
+<p>and the pair covariance, to first order in <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, is</p>
+<div class="math notranslate nohighlight">
+\[\langle \delta a_i(\mathbf{0})^*\, \delta a_j(\mathbf{R}) \rangle
+= b_i b_j \left[C_{ij}(\mathbf{R})
++ i\mathbf{Q}\cdot\boldsymbol{\sigma}_{ij}(\mathbf{R})\right],
+\qquad
+\boldsymbol{\sigma}_{ij}(\mathbf{R}) =
+\langle \delta n_i(\mathbf{0})\, \mathbf{v}_j(\mathbf{R}) \rangle
+- \langle \mathbf{v}_i(\mathbf{0})\, \delta n_j(\mathbf{R}) \rangle .\]</div>
+<p>The vector <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)</span> is antisymmetric under pair
+reversal, <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_{ji}(-\mathbf{R}) =
+-\boldsymbol{\sigma}_{ij}(\mathbf{R})\)</span>, while
+<span class="math notranslate nohighlight">\(e^{i\mathbf{Q}\cdot\mathbf{d}}\)</span> becomes
+<span class="math notranslate nohighlight">\(e^{-i\mathbf{Q}\cdot\mathbf{d}}\)</span>. Each pair and its reverse
+therefore combine into a sine:</p>
+<div class="math notranslate nohighlight">
+\[I_\mathrm{size}(\mathbf{Q}) = -\sum_p b_i b_j\,
+(\mathbf{Q}\cdot\boldsymbol{\sigma}_p)\,
+\sin(2\pi\,\mathbf{h}\cdot\mathbf{d}_p)\, e^{-W_i - W_j},\]</div>
+<p>with the same bin and symmetry averaging as the occupational terms
+(<a class="reference internal" href="discordant_parsimony.scattering.html#discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix" title="discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">size_effect_design_matrix()</span></code></a>).
+The term grows linearly with <span class="math notranslate nohighlight">\(|\mathbf{Q}|\)</span> and is odd about each
+Bragg position, which is the classic asymmetric size-effect diffuse
+scattering. The sign convention is that
+<span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_p\cdot\hat{\mathbf{d}}_p &gt; 0\)</span> when atom
+<span class="math notranslate nohighlight">\(j\)</span> moves toward atom <span class="math notranslate nohighlight">\(i\)</span> whenever <span class="math notranslate nohighlight">\(i\)</span> is vacant,
+i.e. toward the vacancy.</p>
+<p>The intensity is linear in <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)</span>, so the vectors
+are refined alongside <span class="math notranslate nohighlight">\(C_{ij}(\mathbf{R})\)</span> in the same linear
+least-squares problem. Symmetry restricts them
+(<a class="reference internal" href="discordant_parsimony.html#discordant_parsimony.symmetry.vector_orbits" title="discordant_parsimony.symmetry.vector_orbits"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector_orbits()</span></code></a>): an operator
+<span class="math notranslate nohighlight">\(R\)</span> that maps a pair to itself requires
+<span class="math notranslate nohighlight">\(R\boldsymbol{\sigma} = \boldsymbol{\sigma}\)</span>, one that reverses
+it requires <span class="math notranslate nohighlight">\(R\boldsymbol{\sigma} = -\boldsymbol{\sigma}\)</span>, and
+the other pairs of the orbit follow by rotation. On a threefold axis
+this leaves a single component along the axis. Displacements can also
+be restricted to a chosen direction, and the members of a co-occupied
+unit can be made to move as one rigid body, which ties
+<span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)</span> across all atom pairs between two units
+(<a class="reference internal" href="discordant_parsimony.html#discordant_parsimony.symmetry.rigid_unit_vector_rows" title="discordant_parsimony.symmetry.rigid_unit_vector_rows"><code class="xref py py-func docutils literal notranslate"><span class="pre">rigid_unit_vector_rows()</span></code></a>).</p>
+<p>The second-order terms, <span class="math notranslate nohighlight">\(-\tfrac{1}{2}(\mathbf{Q}\cdot
+\mathbf{v}_i)^2\)</span> in each amplitude and the displacement-displacement
+correlation <span class="math notranslate nohighlight">\(\mathbf{Q}^{\mathsf{T}}\langle \mathbf{v}_i
+\mathbf{v}_j^{\mathsf{T}} \rangle\mathbf{Q}\)</span>, are not yet included.</p>
+</section>
 <section id="exact-histogram-bin-averaging">
 <h2>Exact histogram-bin averaging<a class="headerlink" href="#exact-histogram-bin-averaging" title="Link to this heading">#</a></h2>
-<p>Measured volumes are histograms, not point samples. Averaging
-<span class="math notranslate nohighlight">\(e^{2\pi i \mathbf{h}\cdot\mathbf{d}}\)</span> over a bin of widths
-<span class="math notranslate nohighlight">\(\Delta h_a\)</span> multiplies each term by a factor independent of
+<p>Measured volumes are histograms, not point samples. A bin spans widths
+<span class="math notranslate nohighlight">\(\Delta u_a\)</span> along the axes of the volume, whose Miller indices
+are <span class="math notranslate nohighlight">\(\mathbf{h} = W\mathbf{u}\)</span> for the projection matrix
+<span class="math notranslate nohighlight">\(W\)</span> (identity when the axes are along h, k, l). Since
+<span class="math notranslate nohighlight">\(\mathbf{h}\cdot\mathbf{d} = \mathbf{u}\cdot(W^{\mathsf{T}}
+\mathbf{d})\)</span>, averaging <span class="math notranslate nohighlight">\(e^{2\pi i \mathbf{h}\cdot\mathbf{d}}\)</span>
+over a bin multiplies each term by a factor independent of
 <span class="math notranslate nohighlight">\(\mathbf{Q}\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[w_p \;\to\; w_p \prod_a \operatorname{sinc}(\Delta h_a\, d_{p,a}),
+\[w_p \;\to\; w_p \prod_a \operatorname{sinc}\!\left(\Delta u_a\,
+(W^{\mathsf{T}}\mathbf{d}_p)_a\right),
 \qquad \operatorname{sinc}(x) = \frac{\sin \pi x}{\pi x}.\]</div>
 <p>This is exact for unsmeared terms and neglects only the variation of
-the Gaussian factor across one bin otherwise. On a 0.25 r.l.u. grid the
-factor is 0.90 at one cell and 0.64 at two, so it is not negligible.</p>
+the Gaussian factor across one bin otherwise. On a 0.25 r.l.u. grid
+along h, k, l the factor is 0.90 at one cell and 0.64 at two, so it is
+not negligible. When the model is averaged over a data symmetry higher
+than that of the structure, each image <span class="math notranslate nohighlight">\(\mathbf{h}W_k\)</span> is still
+averaged over the measured bin around <span class="math notranslate nohighlight">\(\mathbf{h}\)</span>, so the
+rotation acts on the pair vector inside the factor,
+<span class="math notranslate nohighlight">\(\mathbf{d}_p \to W_k \mathbf{d}_p\)</span>.</p>
 </section>
 <section id="what-the-data-can-resolve">
 <h2>What the data can resolve<a class="headerlink" href="#what-the-data-can-resolve" title="Link to this heading">#</a></h2>
@@ -528,16 +595,22 @@ is the usual way to violate these conditions.</p>
 configurations, the pair-sum intensity equals
 <span class="math notranslate nohighlight">\(\langle |F - \langle F \rangle|^2 \rangle / N\)</span> of the explicit
 supercell to <span class="math notranslate nohighlight">\(10^{-10}\)</span>, including Debye-Waller factors. The bin
-average matches numerical integration over the bin, and the
-slab-averaged <span class="math notranslate nohighlight">\(\Delta\)</span>PDF matches 3D sampling of the Gaussians.</p>
+average matches numerical integration over the bin, including skewed
+bins on a hexagonal cell, and the slab-averaged <span class="math notranslate nohighlight">\(\Delta\)</span>PDF
+matches 3D sampling of the Gaussians. For configurations in which
+present atoms shift next to vacancies, the exact supercell intensity
+minus the occupational model equals the size-effect term to first order:
+the remaining difference scales with the square of the displacement.</p>
 </section>
 <section id="not-yet-implemented">
 <h2>Not yet implemented<a class="headerlink" href="#not-yet-implemented" title="Link to this heading">#</a></h2>
-<p>Correlated displacements of fully occupied atoms (a pair-specific
-<span class="math notranslate nohighlight">\(U\)</span> and the occupation-displacement cross term), magnetic
-scattering, and X-ray form factors <span class="math notranslate nohighlight">\(f(Q)\)</span>. They fit the same
-pair-term structure: correlated displacements change <span class="math notranslate nohighlight">\(U_p\)</span>, and
-the cross term adds sine-weighted terms.</p>
+<p>Second-order displacive terms (displacement-displacement correlations
+<span class="math notranslate nohighlight">\(\mathbf{Q}^{\mathsf{T}}\langle \mathbf{v}_i
+\mathbf{v}_j^{\mathsf{T}}\rangle\mathbf{Q}\)</span>, which grow as
+<span class="math notranslate nohighlight">\(|\mathbf{Q}|^2\)</span>), magnetic scattering, and X-ray form factors
+<span class="math notranslate nohighlight">\(f(Q)\)</span>. They fit the same pair-term structure: correlated
+displacements change <span class="math notranslate nohighlight">\(U_p\)</span> or add terms quadratic in
+<span class="math notranslate nohighlight">\(\mathbf{Q}\)</span>.</p>
 </section>
 </section>
 
@@ -591,6 +664,7 @@ the cross term adds sine-weighted terms.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conventions">Conventions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-pair-term-model">The pair-term model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#occupational-and-split-site-disorder">Occupational and split-site disorder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#size-effect-occupation-displacement-correlations">Size effect: occupation-displacement correlations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exact-histogram-bin-averaging">Exact histogram-bin averaging</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-data-can-resolve">What the data can resolve</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-validity">Physical validity</a></li>
