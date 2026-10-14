@@ -88,21 +88,99 @@ Uncorrelated thermal motion also leaves an incoherent Laue term
 :func:`~discordant_parsimony.pairs.thermal_laue_terms` and stored as two
 terms at :math:`\mathbf{d} = 0`.
 
+Size effect: occupation-displacement correlations
+-------------------------------------------------
+Atoms next to a vacancy often relax toward or away from it. Let a
+present atom be displaced by :math:`\mathbf{u}_i` from its average
+position and define :math:`\mathbf{v}_i = n_i\mathbf{u}_i`, zero when
+the site is empty and zero on average. To first order in the
+displacement the scattering amplitude is
+
+.. math::
+
+   a_i = b_i n_i e^{i\mathbf{Q}\cdot\mathbf{u}_i}
+   \approx b_i \left(n_i + i\mathbf{Q}\cdot\mathbf{v}_i\right),
+   \qquad
+   \delta a_i = b_i \left(\delta n_i + i\mathbf{Q}\cdot\mathbf{v}_i\right),
+
+and the pair covariance, to first order in :math:`\mathbf{v}`, is
+
+.. math::
+
+   \langle \delta a_i(\mathbf{0})^*\, \delta a_j(\mathbf{R}) \rangle
+   = b_i b_j \left[C_{ij}(\mathbf{R})
+   + i\mathbf{Q}\cdot\boldsymbol{\sigma}_{ij}(\mathbf{R})\right],
+   \qquad
+   \boldsymbol{\sigma}_{ij}(\mathbf{R}) =
+   \langle \delta n_i(\mathbf{0})\, \mathbf{v}_j(\mathbf{R}) \rangle
+   - \langle \mathbf{v}_i(\mathbf{0})\, \delta n_j(\mathbf{R}) \rangle .
+
+The vector :math:`\boldsymbol{\sigma}` is antisymmetric under pair
+reversal, :math:`\boldsymbol{\sigma}_{ji}(-\mathbf{R}) =
+-\boldsymbol{\sigma}_{ij}(\mathbf{R})`, while
+:math:`e^{i\mathbf{Q}\cdot\mathbf{d}}` becomes
+:math:`e^{-i\mathbf{Q}\cdot\mathbf{d}}`. Each pair and its reverse
+therefore combine into a sine:
+
+.. math::
+
+   I_\mathrm{size}(\mathbf{Q}) = -\sum_p b_i b_j\,
+   (\mathbf{Q}\cdot\boldsymbol{\sigma}_p)\,
+   \sin(2\pi\,\mathbf{h}\cdot\mathbf{d}_p)\, e^{-W_i - W_j},
+
+with the same bin and symmetry averaging as the occupational terms
+(:func:`~discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix`).
+The term grows linearly with :math:`|\mathbf{Q}|` and is odd about each
+Bragg position, which is the classic asymmetric size-effect diffuse
+scattering. The sign convention is that
+:math:`\boldsymbol{\sigma}_p\cdot\hat{\mathbf{d}}_p > 0` when atom
+:math:`j` moves toward atom :math:`i` whenever :math:`i` is vacant,
+i.e. toward the vacancy.
+
+The intensity is linear in :math:`\boldsymbol{\sigma}`, so the vectors
+are refined alongside :math:`C_{ij}(\mathbf{R})` in the same linear
+least-squares problem. Symmetry restricts them
+(:func:`~discordant_parsimony.symmetry.vector_orbits`): an operator
+:math:`R` that maps a pair to itself requires
+:math:`R\boldsymbol{\sigma} = \boldsymbol{\sigma}`, one that reverses
+it requires :math:`R\boldsymbol{\sigma} = -\boldsymbol{\sigma}`, and
+the other pairs of the orbit follow by rotation. On a threefold axis
+this leaves a single component along the axis. Displacements can also
+be restricted to a chosen direction, and the members of a co-occupied
+unit can be made to move as one rigid body, which ties
+:math:`\boldsymbol{\sigma}` across all atom pairs between two units
+(:func:`~discordant_parsimony.symmetry.rigid_unit_vector_rows`).
+
+The second-order terms, :math:`-\tfrac{1}{2}(\mathbf{Q}\cdot
+\mathbf{v}_i)^2` in each amplitude and the displacement-displacement
+correlation :math:`\mathbf{Q}^{\mathsf{T}}\langle \mathbf{v}_i
+\mathbf{v}_j^{\mathsf{T}} \rangle\mathbf{Q}`, are not yet included.
+
 Exact histogram-bin averaging
 -----------------------------
-Measured volumes are histograms, not point samples. Averaging
-:math:`e^{2\pi i \mathbf{h}\cdot\mathbf{d}}` over a bin of widths
-:math:`\Delta h_a` multiplies each term by a factor independent of
+Measured volumes are histograms, not point samples. A bin spans widths
+:math:`\Delta u_a` along the axes of the volume, whose Miller indices
+are :math:`\mathbf{h} = W\mathbf{u}` for the projection matrix
+:math:`W` (identity when the axes are along h, k, l). Since
+:math:`\mathbf{h}\cdot\mathbf{d} = \mathbf{u}\cdot(W^{\mathsf{T}}
+\mathbf{d})`, averaging :math:`e^{2\pi i \mathbf{h}\cdot\mathbf{d}}`
+over a bin multiplies each term by a factor independent of
 :math:`\mathbf{Q}`:
 
 .. math::
 
-   w_p \;\to\; w_p \prod_a \operatorname{sinc}(\Delta h_a\, d_{p,a}),
+   w_p \;\to\; w_p \prod_a \operatorname{sinc}\!\left(\Delta u_a\,
+   (W^{\mathsf{T}}\mathbf{d}_p)_a\right),
    \qquad \operatorname{sinc}(x) = \frac{\sin \pi x}{\pi x}.
 
 This is exact for unsmeared terms and neglects only the variation of
-the Gaussian factor across one bin otherwise. On a 0.25 r.l.u. grid the
-factor is 0.90 at one cell and 0.64 at two, so it is not negligible.
+the Gaussian factor across one bin otherwise. On a 0.25 r.l.u. grid
+along h, k, l the factor is 0.90 at one cell and 0.64 at two, so it is
+not negligible. When the model is averaged over a data symmetry higher
+than that of the structure, each image :math:`\mathbf{h}W_k` is still
+averaged over the measured bin around :math:`\mathbf{h}`, so the
+rotation acts on the pair vector inside the factor,
+:math:`\mathbf{d}_p \to W_k \mathbf{d}_p`.
 
 What the data can resolve
 -------------------------
@@ -129,13 +207,19 @@ The test suite checks the model against brute force. For periodic
 configurations, the pair-sum intensity equals
 :math:`\langle |F - \langle F \rangle|^2 \rangle / N` of the explicit
 supercell to :math:`10^{-10}`, including Debye-Waller factors. The bin
-average matches numerical integration over the bin, and the
-slab-averaged :math:`\Delta`\ PDF matches 3D sampling of the Gaussians.
+average matches numerical integration over the bin, including skewed
+bins on a hexagonal cell, and the slab-averaged :math:`\Delta`\ PDF
+matches 3D sampling of the Gaussians. For configurations in which
+present atoms shift next to vacancies, the exact supercell intensity
+minus the occupational model equals the size-effect term to first order:
+the remaining difference scales with the square of the displacement.
 
 Not yet implemented
 -------------------
-Correlated displacements of fully occupied atoms (a pair-specific
-:math:`U` and the occupation-displacement cross term), magnetic
-scattering, and X-ray form factors :math:`f(Q)`. They fit the same
-pair-term structure: correlated displacements change :math:`U_p`, and
-the cross term adds sine-weighted terms.
+Second-order displacive terms (displacement-displacement correlations
+:math:`\mathbf{Q}^{\mathsf{T}}\langle \mathbf{v}_i
+\mathbf{v}_j^{\mathsf{T}}\rangle\mathbf{Q}`, which grow as
+:math:`|\mathbf{Q}|^2`), magnetic scattering, and X-ray form factors
+:math:`f(Q)`. They fit the same pair-term structure: correlated
+displacements change :math:`U_p` or add terms quadratic in
+:math:`\mathbf{Q}`.
