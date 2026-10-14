@@ -430,6 +430,7 @@ histogram-bin averaging</p></li>
 <li class="toctree-l2"><a class="reference internal" href="discordant_parsimony.scattering.html#module-discordant_parsimony.scattering.numpy_backend">discordant_parsimony.scattering.numpy_backend module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="discordant_parsimony.scattering.html#discordant_parsimony.scattering.numpy_backend.bin_factor"><code class="docutils literal notranslate"><span class="pre">bin_factor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="discordant_parsimony.scattering.html#discordant_parsimony.scattering.numpy_backend.design_matrix"><code class="docutils literal notranslate"><span class="pre">design_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="discordant_parsimony.scattering.html#discordant_parsimony.scattering.numpy_backend.displacement_design_matrix"><code class="docutils literal notranslate"><span class="pre">displacement_design_matrix()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="discordant_parsimony.scattering.html#discordant_parsimony.scattering.numpy_backend.evaluate"><code class="docutils literal notranslate"><span class="pre">evaluate()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="discordant_parsimony.scattering.html#discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix"><code class="docutils literal notranslate"><span class="pre">size_effect_design_matrix()</span></code></a></li>
 </ul>
@@ -1018,8 +1019,44 @@ pair distance.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.TensorOrbits">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">TensorOrbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L531-L555"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.TensorOrbits" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Symmetry-adapted symmetric tensor coefficients on pair orbits.</p>
+<p>Pair <span class="math notranslate nohighlight">\(p\)</span> carries <code class="docutils literal notranslate"><span class="pre">tensors[k][q]</span></code> for coefficient <span class="math notranslate nohighlight">\(k\)</span>
+on the <code class="docutils literal notranslate"><span class="pre">q</span></code>-th pair of <code class="docutils literal notranslate"><span class="pre">pairs[k]</span></code>, with
+<span class="math notranslate nohighlight">\(V_{gp} = R_g V_p R_g^{\mathsf{T}}\)</span> under symmetry and
+<span class="math notranslate nohighlight">\(V_{\bar p} = V_p\)</span> (symmetric part) under pair reversal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>orbit</strong><span class="classifier">ndarray of int, (k,)</span></dt><dd></dd>
+<dt><strong>pairs</strong><span class="classifier">list of ndarray</span></dt><dd></dd>
+<dt><strong>tensors</strong><span class="classifier">list of ndarray</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">(len(pairs[k]),</span> <span class="pre">3,</span> <span class="pre">3)</span></code> Cartesian symmetric tensors.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.TensorOrbits.orbit">
+<span class="sig-name descname"><span class="pre">orbit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.TensorOrbits.orbit" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.TensorOrbits.pairs">
+<span class="sig-name descname"><span class="pre">pairs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.TensorOrbits.pairs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.TensorOrbits.tensors">
+<span class="sig-name descname"><span class="pre">tensors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.TensorOrbits.tensors" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.VectorOrbits">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">VectorOrbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L322-L350"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.VectorOrbits" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">VectorOrbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L338-L366"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.VectorOrbits" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Symmetry-adapted antisymmetric vector coefficients on pair orbits.</p>
 <p>Each refined coefficient <span class="math notranslate nohighlight">\(\theta_k\)</span> multiplies a basis vector
@@ -1055,6 +1092,30 @@ symmetry and <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_{\
 <span class="sig-name descname"><span class="pre">vectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.VectorOrbits.vectors" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.coefficient_slots">
+<span class="sig-name descname"><span class="pre">coefficient_slots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L625-L657"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.coefficient_slots" title="Link to this definition">#</a></dt>
+<dd><p>Compact per-pair view of vector or tensor coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fields</strong><span class="classifier">VectorOrbits or TensorOrbits</span></dt><dd></dd>
+<dt><strong>n_pairs</strong><span class="classifier">int</span></dt><dd></dd>
+<dt><strong>shape</strong><span class="classifier">tuple</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">(3,)</span></code> for vectors or <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">3)</span></code> for tensors.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>index</strong><span class="classifier">ndarray of int, (m, s)</span></dt><dd><p>Coefficient indices carried by each pair (<code class="docutils literal notranslate"><span class="pre">-1</span></code> padding).</p>
+</dd>
+<dt><strong>value</strong><span class="classifier">ndarray, (m, s) + shape</span></dt><dd><p>The corresponding Cartesian basis values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1111,7 +1172,7 @@ symmetry and <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_{\
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.pair_images">
-<span class="sig-name descname"><span class="pre">pair_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L273-L319"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.pair_images" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">pair_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L289-L335"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.pair_images" title="Link to this definition">#</a></dt>
 <dd><p>Index of the image of every pair under each operator, and its reverse.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1200,8 +1261,23 @@ a cylinder along a direction the point group does not preserve.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.rigid_unit_tensor_rows">
+<span class="sig-name descname"><span class="pre">rigid_unit_tensor_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L660-L705"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.rigid_unit_tensor_rows" title="Link to this definition">#</a></dt>
+<dd><p>Ties making co-occupied units move as rigid wholes (tensor version).</p>
+<p>The displacement correlation of every member pair between two rigid
+units is the same tensor. See <a class="reference internal" href="#discordant_parsimony.symmetry.rigid_unit_vector_rows" title="discordant_parsimony.symmetry.rigid_unit_vector_rows"><code class="xref py py-func docutils literal notranslate"><span class="pre">rigid_unit_vector_rows()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>rows</strong><span class="classifier">ndarray, (r, len(tensors))</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.rigid_unit_vector_rows">
-<span class="sig-name descname"><span class="pre">rigid_unit_vector_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L439-L494"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.rigid_unit_vector_rows" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">rigid_unit_vector_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L453-L508"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.rigid_unit_vector_rows" title="Link to this definition">#</a></dt>
 <dd><p>Ties making co-occupied units move and fluctuate as rigid wholes.</p>
 <p>In a co-occupied unit the members share one occupation variable and,
 for a rigid molecule, one displacement, so the size-effect vector of
@@ -1226,8 +1302,38 @@ covariant, so this suffices).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="discordant_parsimony.symmetry.tensor_orbits">
+<span class="sig-name descname"><span class="pre">tensor_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L558-L622"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.tensor_orbits" title="Link to this definition">#</a></dt>
+<dd><p>Basis of symmetric pair tensors allowed by symmetry.</p>
+<p>Used for displacement-displacement correlations
+<span class="math notranslate nohighlight">\(V_{ij}(\mathbf{R}) = \langle \mathbf{v}_i(\mathbf{0})\,
+\mathbf{v}_j(\mathbf{R})^{\mathsf{T}} \rangle\)</span>, of which only the
+symmetric part contributes to <span class="math notranslate nohighlight">\(\mathbf{Q}^{\mathsf{T}} V
+\mathbf{Q}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>orbits</strong><span class="classifier">PairOrbits</span></dt><dd></dd>
+<dt><strong>structure</strong><span class="classifier">Structure</span></dt><dd></dd>
+<dt><strong>sites</strong><span class="classifier">Sites</span></dt><dd></dd>
+<dt><strong>exclude</strong><span class="classifier">sequence of int, optional</span></dt><dd><p>Orbits without tensor coefficients.</p>
+</dd>
+<dt><strong>axis</strong><span class="classifier">array_like, (3,), optional</span></dt><dd><p>Restrict displacements to this fractional direction, so that
+<span class="math notranslate nohighlight">\(V \propto \hat{\mathbf{u}}\hat{\mathbf{u}}^{\mathsf{T}}\)</span>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>tensors</strong><span class="classifier">TensorOrbits</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.vector_orbits">
-<span class="sig-name descname"><span class="pre">vector_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L353-L409"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.vector_orbits" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">vector_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L369-L423"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.vector_orbits" title="Link to this definition">#</a></dt>
 <dd><p>Basis of antisymmetric pair vectors allowed by symmetry.</p>
 <p>Used for size-effect coefficients
 <code class="docutils literal notranslate"><span class="pre">&lt;dn_i(0)</span> <span class="pre">v_j(R)&gt;</span> <span class="pre">-</span> <span class="pre">&lt;v_i(0)</span> <span class="pre">dn_j(R)&gt;</span></code>, which change sign under
@@ -1256,7 +1362,7 @@ compatible with the symmetry.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.symmetry.vector_slots">
-<span class="sig-name descname"><span class="pre">vector_slots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pairs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L412-L436"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.vector_slots" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">vector_slots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pairs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/symmetry.py#L426-L450"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.symmetry.vector_slots" title="Link to this definition">#</a></dt>
 <dd><p>Compact per-pair view of vector coefficients.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2495,7 +2601,7 @@ intensities better.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.participation.participation_scan">
-<span class="sig-name descname"><span class="pre">participation_scan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/participation.py#L54-L166"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.participation.participation_scan" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">participation_scan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mechanisms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/participation.py#L54-L180"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.participation.participation_scan" title="Link to this definition">#</a></dt>
 <dd><p>Refine every combination of participating units.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2518,10 +2624,13 @@ intensities better.</p>
 </dd>
 <dt><strong>B</strong><span class="classifier">ndarray, (m, nb), optional</span></dt><dd><p>Background basis.</p>
 </dd>
-<dt><strong>size</strong><span class="classifier">dict, optional</span></dt><dd><p>Size-effect coefficients, <code class="docutils literal notranslate"><span class="pre">{&quot;A&quot;:</span> <span class="pre">design</span> <span class="pre">columns,</span> <span class="pre">&quot;orbit&quot;:</span> <span class="pre">orbit</span>
-<span class="pre">of</span> <span class="pre">each</span> <span class="pre">column,</span> <span class="pre">&quot;rows&quot;:</span> <span class="pre">their</span> <span class="pre">constraint</span> <span class="pre">rows}</span></code>. Every unit
-combination is then refined without and with the size effect
-(labelled <code class="docutils literal notranslate"><span class="pre">&quot;size</span> <span class="pre">effect&quot;</span></code>); its coefficients follow the same
+<dt><strong>size</strong><span class="classifier">dict, optional</span></dt><dd><p>Shorthand for one mechanism named <code class="docutils literal notranslate"><span class="pre">&quot;size</span> <span class="pre">effect&quot;</span></code>.</p>
+</dd>
+<dt><strong>mechanisms</strong><span class="classifier">list of dict, optional</span></dt><dd><p>Additional coefficient blocks, each <code class="docutils literal notranslate"><span class="pre">{&quot;name&quot;:</span> <span class="pre">label,</span> <span class="pre">&quot;A&quot;:</span>
+<span class="pre">design</span> <span class="pre">columns,</span> <span class="pre">&quot;orbit&quot;:</span> <span class="pre">orbit</span> <span class="pre">of</span> <span class="pre">each</span> <span class="pre">column,</span> <span class="pre">&quot;rows&quot;:</span> <span class="pre">their</span>
+<span class="pre">constraint</span> <span class="pre">rows}</span></code> (e.g. size effect, displacement
+correlations). Every unit combination is refined with every
+subset of mechanisms; their coefficients follow the same
 participation switches as the occupational ones.</p>
 </dd>
 </dl>
@@ -2864,18 +2973,27 @@ background stays in the data and should be modeled.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.PairOrbits.representatives"><code class="docutils literal notranslate"><span class="pre">PairOrbits.representatives()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.TensorOrbits"><code class="docutils literal notranslate"><span class="pre">TensorOrbits</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.TensorOrbits.orbit"><code class="docutils literal notranslate"><span class="pre">TensorOrbits.orbit</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.TensorOrbits.pairs"><code class="docutils literal notranslate"><span class="pre">TensorOrbits.pairs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.TensorOrbits.tensors"><code class="docutils literal notranslate"><span class="pre">TensorOrbits.tensors</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.VectorOrbits"><code class="docutils literal notranslate"><span class="pre">VectorOrbits</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.VectorOrbits.orbit"><code class="docutils literal notranslate"><span class="pre">VectorOrbits.orbit</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.VectorOrbits.pairs"><code class="docutils literal notranslate"><span class="pre">VectorOrbits.pairs</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.VectorOrbits.vectors"><code class="docutils literal notranslate"><span class="pre">VectorOrbits.vectors</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.coefficient_slots"><code class="docutils literal notranslate"><span class="pre">coefficient_slots()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.orbit_average"><code class="docutils literal notranslate"><span class="pre">orbit_average()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.orbit_pair_terms"><code class="docutils literal notranslate"><span class="pre">orbit_pair_terms()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.pair_images"><code class="docutils literal notranslate"><span class="pre">pair_images()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.pair_orbits"><code class="docutils literal notranslate"><span class="pre">pair_orbits()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.position_permutations"><code class="docutils literal notranslate"><span class="pre">position_permutations()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.rigid_unit_tensor_rows"><code class="docutils literal notranslate"><span class="pre">rigid_unit_tensor_rows()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.rigid_unit_vector_rows"><code class="docutils literal notranslate"><span class="pre">rigid_unit_vector_rows()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.tensor_orbits"><code class="docutils literal notranslate"><span class="pre">tensor_orbits()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.vector_orbits"><code class="docutils literal notranslate"><span class="pre">vector_orbits()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.symmetry.vector_slots"><code class="docutils literal notranslate"><span class="pre">vector_slots()</span></code></a></li>
 </ul>
