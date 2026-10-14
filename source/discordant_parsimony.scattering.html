@@ -415,16 +415,53 @@ backend is the float64 reference; a CuPy backend is planned.</p>
 <span id="discordant-parsimony-scattering-numpy-backend-module"></span><h2>discordant_parsimony.scattering.numpy_backend module<a class="headerlink" href="#module-discordant_parsimony.scattering.numpy_backend" title="Link to this heading">#</a></h2>
 <p>CPU reference evaluation of pair-term intensities (float64).</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="discordant_parsimony.scattering.numpy_backend.bin_factor">
+<span class="sig-name descname"><span class="pre">bin_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L94-L128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.bin_factor" title="Link to this definition">#</a></dt>
+<dd><p>Attenuation of pair terms by averaging over histogram bins.</p>
+<p>A bin spans widths <span class="math notranslate nohighlight">\(\Delta u_a\)</span> along the axes of the volume,
+whose Miller indices are <span class="math notranslate nohighlight">\(\mathbf{h} = W\mathbf{u}\)</span>. Since
+<span class="math notranslate nohighlight">\(\mathbf{h}\cdot\mathbf{d} = \mathbf{u}\cdot(W^\mathsf{T}
+\mathbf{d})\)</span>, averaging <span class="math notranslate nohighlight">\(e^{2\pi i \mathbf{h}\cdot\mathbf{d}}\)</span>
+over the bin multiplies a term by</p>
+<div class="math notranslate nohighlight">
+\[\prod_a \operatorname{sinc}\!\left(\Delta u_a\,
+(W^\mathsf{T}\mathbf{d})_a\right).\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>d</strong><span class="classifier">ndarray, (n, 3)</span></dt><dd><p>Pair vectors in fractional coordinates.</p>
+</dd>
+<dt><strong>widths</strong><span class="classifier">array_like, (3,)</span></dt><dd><p>Bin widths along the volume axes <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p>
+</dd>
+<dt><strong>projection</strong><span class="classifier">ndarray, (3, 3), optional</span></dt><dd><p>The projection matrix <span class="math notranslate nohighlight">\(W\)</span> of the volume; identity (axes
+along h, k, l) by default.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>factor</strong><span class="classifier">ndarray, (n,)</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="discordant_parsimony.scattering.numpy_backend.design_matrix">
-<span class="sig-name descname"><span class="pre">design_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L94-L165"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.design_matrix" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">design_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L131-L225"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.design_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Intensity per unit covariance of each pair orbit.</p>
 <p>Column <span class="math notranslate nohighlight">\(k\)</span> is</p>
 <div class="math notranslate nohighlight">
-\[A_k(\mathbf{Q}) = \sum_{p \in k} b_i b_j\, e^{-W_i - W_j}
-\cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)
-\prod_a \operatorname{sinc}(\Delta h_a d_{p,a}),\]</div>
-<p>so that <span class="math notranslate nohighlight">\(I = A \mathbf{c}\)</span> for orbit coefficients
-<span class="math notranslate nohighlight">\(\mathbf{c}\)</span>.</p>
+\[A_k(\mathbf{h}) = \frac{1}{n_W} \sum_{W} \sum_{p \in k} b_i b_j\,
+e^{-W_i - W_j}
+\cos(2\pi\, \mathbf{h} \cdot R_W\mathbf{d}_p)\,
+\beta(R_W \mathbf{d}_p),\]</div>
+<p>averaged over rotations <span class="math notranslate nohighlight">\(R_W\)</span> (<code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">&#64;</span> <span class="pre">W</span></code>), with the bin factor
+<span class="math notranslate nohighlight">\(\beta\)</span> of <a class="reference internal" href="#discordant_parsimony.scattering.numpy_backend.bin_factor" title="discordant_parsimony.scattering.numpy_backend.bin_factor"><code class="xref py py-func docutils literal notranslate"><span class="pre">bin_factor()</span></code></a> and Debye-Waller factors at
+<span class="math notranslate nohighlight">\(\mathbf{h} R_W\)</span>, so that <span class="math notranslate nohighlight">\(I = A \mathbf{c}\)</span> for orbit
+coefficients <span class="math notranslate nohighlight">\(\mathbf{c}\)</span>. The bin is the measured one around
+<span class="math notranslate nohighlight">\(\mathbf{h}\)</span> for every image, which is why the rotation acts
+on the pair vector inside the bin factor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -436,13 +473,22 @@ backend is the float64 reference; a CuPy backend is planned.</p>
 </dd>
 <dt><strong>structure</strong><span class="classifier">Structure</span></dt><dd><p>Supplies the reciprocal metric.</p>
 </dd>
-<dt><strong>widths</strong><span class="classifier">array_like, (3,), optional</span></dt><dd><p>Histogram bin widths in r.l.u. for exact bin averaging.</p>
+<dt><strong>widths</strong><span class="classifier">array_like, (3,), optional</span></dt><dd><p>Histogram bin widths along the volume axes for exact bin
+averaging.</p>
 </dd>
 <dt><strong>thermal</strong><span class="classifier">bool, optional</span></dt><dd><p>Include Debye-Waller factors.</p>
 </dd>
 <dt><strong>b</strong><span class="classifier">array_like, (n,), optional</span></dt><dd><p>Scattering lengths in fm. Defaults to neutron values.</p>
 </dd>
 <dt><strong>max_elements</strong><span class="classifier">int, optional</span></dt><dd><p>Tile size bound on Q-by-pair products.</p>
+</dd>
+<dt><strong>operators</strong><span class="classifier">ndarray of int, (n, 3, 3), optional</span></dt><dd><p>Average over <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">&#64;</span> <span class="pre">W</span></code> for these rotations, e.g. the coset
+representatives of a data symmetry higher than that of the
+structure
+(<a class="reference internal" href="discordant_parsimony.html#discordant_parsimony.selection.coset_operators" title="discordant_parsimony.selection.coset_operators"><code class="xref py py-func docutils literal notranslate"><span class="pre">coset_operators()</span></code></a>).</p>
+</dd>
+<dt><strong>projection</strong><span class="classifier">ndarray, (3, 3), optional</span></dt><dd><p>Projection matrix of the volume (<code class="docutils literal notranslate"><span class="pre">Volume.W</span></code>) when its axes are
+not along h, k, l.</p>
 </dd>
 </dl>
 </dd>
@@ -483,6 +529,49 @@ reversal closed.</p>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>I</strong><span class="classifier">ndarray, (…)</span></dt><dd><p>Intensity in <span class="math notranslate nohighlight">\(\mathrm{fm}^2\)</span> per unit cell.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix">
+<span class="sig-name descname"><span class="pre">size_effect_design_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4194304</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/zjmorgan/discordant-parsimony/blob/main/src/discordant_parsimony/scattering/numpy_backend.py#L228-L320"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Intensity per unit size-effect coefficient.</p>
+<p>To first order in the displacement <span class="math notranslate nohighlight">\(\mathbf{v} = n\mathbf{u}\)</span>
+of present atoms, the occupation-displacement cross term is</p>
+<div class="math notranslate nohighlight">
+\[I_\mathrm{size}(\mathbf{Q}) = -\sum_p b_i b_j\,
+(\mathbf{Q} \cdot \boldsymbol{\sigma}_p)
+\sin(2\pi\, \mathbf{h} \cdot \mathbf{d}_p),
+\qquad
+\boldsymbol{\sigma}_p = \langle \delta n_i(\mathbf{0})\,
+\mathbf{v}_j(\mathbf{R}) \rangle
+- \langle \mathbf{v}_i(\mathbf{0})\,
+\delta n_j(\mathbf{R}) \rangle,\]</div>
+<p>with <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}_p = \sum_k \theta_k
+\mathbf{v}_{pk}\)</span> from <a class="reference internal" href="discordant_parsimony.html#discordant_parsimony.symmetry.vector_orbits" title="discordant_parsimony.symmetry.vector_orbits"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector_orbits()</span></code></a>.
+It is odd in <span class="math notranslate nohighlight">\(\mathbf{Q} - \mathbf{G}\)</span> about Bragg positions
+(asymmetric diffuse) and grows linearly with <span class="math notranslate nohighlight">\(|\mathbf{Q}|\)</span>.
+Debye-Waller, bin and symmetry averaging follow
+<a class="reference internal" href="#discordant_parsimony.scattering.numpy_backend.design_matrix" title="discordant_parsimony.scattering.numpy_backend.design_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">design_matrix()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>h</strong><span class="classifier">array_like, (m, 3)</span></dt><dd><p>Miller indices in r.l.u.</p>
+</dd>
+<dt><strong>orbits</strong><span class="classifier">PairOrbits</span></dt><dd></dd>
+<dt><strong>vectors</strong><span class="classifier">VectorOrbits</span></dt><dd></dd>
+<dt><strong>sites</strong><span class="classifier">Sites</span></dt><dd></dd>
+<dt><strong>structure</strong><span class="classifier">Structure</span></dt><dd></dd>
+<dt><strong>widths, thermal, b, max_elements, operators, projection</strong></dt><dd><p>As for <a class="reference internal" href="#discordant_parsimony.scattering.numpy_backend.design_matrix" title="discordant_parsimony.scattering.numpy_backend.design_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">design_matrix()</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>A</strong><span class="classifier">ndarray, (m, len(vectors))</span></dt><dd><p>Columns in units of intensity per Angstrom of coefficient.</p>
 </dd>
 </dl>
 </dd>
@@ -540,8 +629,10 @@ reversal closed.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-discordant_parsimony.scattering.numpy_backend">discordant_parsimony.scattering.numpy_backend module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.scattering.numpy_backend.bin_factor"><code class="docutils literal notranslate"><span class="pre">bin_factor()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.scattering.numpy_backend.design_matrix"><code class="docutils literal notranslate"><span class="pre">design_matrix()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.scattering.numpy_backend.evaluate"><code class="docutils literal notranslate"><span class="pre">evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discordant_parsimony.scattering.numpy_backend.size_effect_design_matrix"><code class="docutils literal notranslate"><span class="pre">size_effect_design_matrix()</span></code></a></li>
 </ul>
 </li>
 </ul>

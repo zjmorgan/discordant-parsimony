@@ -17,7 +17,7 @@ The average structure and its rules
    from discordant_parsimony.io import data_root
    from discordant_parsimony.rules import find_clusters, forbidden_contacts
 
-   structure = Structure.from_cif(data_root() / "Tb5Ru6Sn18" / "Tb5Ru6Sn18.cif")
+   structure = Structure.from_cif(data_root() / "Tb5Ru6Sn18_293K" / "Tb5Ru6Sn18.cif")
    sites = structure.sites()
    active = sites.select(sites.partial())  # Tb2, Sn1, Sn2: 112 positions
    clusters = find_clusters(structure, active, 1.2)
