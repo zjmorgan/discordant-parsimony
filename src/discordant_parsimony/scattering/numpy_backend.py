@@ -318,3 +318,91 @@ def size_effect_design_matrix(
                 )
                 A[start : start + tile] += (S.T @ (X[:, used] * proj).T).T
     return A / len(operators)
+
+
+def displacement_design_matrix(
+    h,
+    orbits,
+    tensors,
+    sites,
+    structure,
+    widths=None,
+    thermal=True,
+    b=None,
+    max_elements=2**22,
+    operators=None,
+    projection=None,
+):
+    r"""
+    Intensity per unit displacement-displacement coefficient.
+
+    To second order in the displacement :math:`\mathbf{v} = n\mathbf{u}`
+    of present atoms, correlated displacements contribute
+
+    .. math::
+
+        I_\mathrm{disp}(\mathbf{Q}) = \sum_p b_i b_j\,
+        (\mathbf{Q}^{\mathsf{T}} V_p \mathbf{Q})
+        \cos(2\pi\, \mathbf{h} \cdot \mathbf{d}_p)\, e^{-W_i - W_j},
+        \qquad
+        V_p = \langle \mathbf{v}_i(\mathbf{0})\,
+        \mathbf{v}_j(\mathbf{R})^{\mathsf{T}} \rangle,
+
+    with :math:`V_p = \sum_k \theta_k V_{pk}` from
+    :func:`~discordant_parsimony.symmetry.tensor_orbits`. It grows as
+    :math:`|\mathbf{Q}|^2`. Debye-Waller, bin and symmetry averaging
+    follow :func:`design_matrix`.
+
+    Parameters
+    ----------
+    h : array_like, (m, 3)
+    orbits : PairOrbits
+    tensors : TensorOrbits
+    sites : Sites
+    structure : Structure
+    widths, thermal, b, max_elements, operators, projection
+        As for :func:`design_matrix`.
+
+    Returns
+    -------
+    A : ndarray, (m, len(tensors))
+        Columns in units of intensity per Angstrom^2 of coefficient.
+
+    """
+
+    from scipy.sparse import csr_matrix
+
+    from discordant_parsimony.symmetry import coefficient_slots
+
+    h = np.asarray(h, dtype=float).reshape(-1, 3)
+    b = sites.b if b is None else np.asarray(b)
+    if operators is None or len(operators) == 0:
+        operators = [np.eye(3)]
+    index, value = coefficient_slots(tensors, len(orbits), (3, 3))
+    U6 = _tensor_components(sites.U)
+    tile = max(1, max_elements // max(1, 6 * len(orbits)))
+
+    A = np.zeros((len(h), len(tensors)))
+    for W in operators:
+        W = np.asarray(W, dtype=float)
+        d_rot = orbits.d @ W.T
+        w = b[orbits.i] * b[orbits.j]
+        if widths is not None:
+            w = w * bin_factor(d_rot, widths, projection)
+        for start in range(0, len(h), tile):
+            hw = h[start : start + tile] @ W
+            X = np.cos(2 * np.pi * hw @ orbits.d.T) * w
+            Q6 = _quadratic_components(structure.Q(hw))
+            if thermal:
+                dw = np.exp(-0.5 * Q6 @ U6.T)
+                X *= dw[:, orbits.i] * dw[:, orbits.j]
+            for s in range(index.shape[1]):
+                k = index[:, s]
+                used = k >= 0
+                proj = Q6 @ _tensor_components(value[used, s]).T
+                S = csr_matrix(
+                    (np.ones(used.sum()), (np.arange(used.sum()), k[used])),
+                    shape=(used.sum(), len(tensors)),
+                )
+                A[start : start + tile] += (S.T @ (X[:, used] * proj).T).T
+    return A / len(operators)

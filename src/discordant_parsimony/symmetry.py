@@ -270,6 +270,22 @@ def orbit_pair_terms(orbits, sites, c, thermal=True, b=None):
     return PairTerms(orbits.d, w, U)
 
 
+def _null_space(M, tol=1e-9):
+    """Null space with an absolute tolerance.
+
+    Symmetry constraint rows have entries of order one, so singular
+    values below ``tol`` are round-off. A tolerance relative to the
+    largest singular value (as in ``scipy.linalg.null_space``) fails when
+    every row is round-off, e.g. for the identity operator.
+    """
+
+    if M.size == 0:
+        return np.eye(M.shape[1])
+    _, S, Vt = np.linalg.svd(M)
+    rank = int(np.sum(S > tol))
+    return Vt[rank:].T
+
+
 def pair_images(orbits, structure, sites):
     """
     Index of the image of every pair under each operator, and its reverse.
@@ -376,8 +392,6 @@ def vector_orbits(orbits, structure, sites, exclude=(), axis=None):
 
     """
 
-    from scipy.linalg import null_space
-
     image, reverse = pair_images(orbits, structure, sites)
     Ainv = np.linalg.inv(structure.A)
     rot = [structure.A @ W @ Ainv for W, _ in structure.operators]
@@ -399,7 +413,7 @@ def vector_orbits(orbits, structure, sites, exclude=(), axis=None):
                 mapping.setdefault(q, sign * R)
         if axis is not None:
             rows.append(np.eye(3) - np.outer(u, u))
-        basis = null_space(np.vstack(rows)) if rows else np.eye(3)
+        basis = _null_space(np.vstack(rows)) if rows else np.eye(3)
         members = np.array(sorted(mapping))
         for k in range(basis.shape[1]):
             v = np.array([mapping[q] @ basis[:, k] for q in members])
@@ -490,5 +504,202 @@ def rigid_unit_vector_rows(orbits, vectors, clusters):
         rows.append(sigma(p) - sigma(ref))
     if not rows:
         return np.zeros((0, len(vectors)))
+    M = np.vstack(rows)
+    return M[np.any(np.abs(M) > 1e-12, axis=1)]
+
+
+_SYM = [(0, 0), (1, 1), (2, 2), (0, 1), (0, 2), (1, 2)]
+
+
+def _sym_basis():
+    """Orthonormal basis of symmetric 3x3 matrices (Frobenius)."""
+
+    E = np.zeros((6, 3, 3))
+    for k, (a, b) in enumerate(_SYM):
+        if a == b:
+            E[k, a, a] = 1
+        else:
+            E[k, a, b] = E[k, b, a] = 1 / np.sqrt(2)
+    return E
+
+
+def _sym_coordinates(T):
+    E = _sym_basis()
+    return np.einsum("kab,...ab->...k", E, T)
+
+
+@dataclass
+class TensorOrbits:
+    r"""
+    Symmetry-adapted symmetric tensor coefficients on pair orbits.
+
+    Pair :math:`p` carries ``tensors[k][q]`` for coefficient :math:`k`
+    on the ``q``-th pair of ``pairs[k]``, with
+    :math:`V_{gp} = R_g V_p R_g^{\mathsf{T}}` under symmetry and
+    :math:`V_{\bar p} = V_p` (symmetric part) under pair reversal.
+
+    Attributes
+    ----------
+    orbit : ndarray of int, (k,)
+    pairs : list of ndarray
+    tensors : list of ndarray
+        ``(len(pairs[k]), 3, 3)`` Cartesian symmetric tensors.
+
+    """
+
+    orbit: np.ndarray
+    pairs: list
+    tensors: list
+
+    def __len__(self):
+        return len(self.orbit)
+
+
+def tensor_orbits(orbits, structure, sites, exclude=(), axis=None):
+    r"""
+    Basis of symmetric pair tensors allowed by symmetry.
+
+    Used for displacement-displacement correlations
+    :math:`V_{ij}(\mathbf{R}) = \langle \mathbf{v}_i(\mathbf{0})\,
+    \mathbf{v}_j(\mathbf{R})^{\mathsf{T}} \rangle`, of which only the
+    symmetric part contributes to :math:`\mathbf{Q}^{\mathsf{T}} V
+    \mathbf{Q}`.
+
+    Parameters
+    ----------
+    orbits : PairOrbits
+    structure : Structure
+    sites : Sites
+    exclude : sequence of int, optional
+        Orbits without tensor coefficients.
+    axis : array_like, (3,), optional
+        Restrict displacements to this fractional direction, so that
+        :math:`V \propto \hat{\mathbf{u}}\hat{\mathbf{u}}^{\mathsf{T}}`.
+
+    Returns
+    -------
+    tensors : TensorOrbits
+
+    """
+
+    E = _sym_basis()
+    image, reverse = pair_images(orbits, structure, sites)
+    Ainv = np.linalg.inv(structure.A)
+    rot = [structure.A @ W @ Ainv for W, _ in structure.operators]
+    act = [
+        _sym_coordinates(np.einsum("ab,kbc,dc->kad", R, E, R)).T for R in rot
+    ]
+    if axis is not None:
+        u = structure.A @ np.asarray(axis, float)
+        u = u / np.linalg.norm(u)
+        P = np.outer(u, u)
+        uu = _sym_coordinates(P)
+        # keep only the component along u u^T
+        project = np.eye(6) - np.outer(uu, uu) / (uu @ uu)
+    reps = orbits.representatives()
+    excluded = set(np.atleast_1d(exclude).tolist())
+
+    orbit_of, pairs_of, tensors_of = [], [], []
+    for o, p0 in enumerate(reps):
+        if o in excluded:
+            continue
+        rows, mapping = [], {}
+        for g, R in enumerate(rot):
+            for q in (image[g, p0], reverse[image[g, p0]]):
+                if q == p0:
+                    rows.append(act[g] - np.eye(6))
+                mapping.setdefault(q, R)
+        if axis is not None:
+            rows.append(project)
+        basis = _null_space(np.vstack(rows)) if rows else np.eye(6)
+        members = np.array(sorted(mapping))
+        for k in range(basis.shape[1]):
+            T = np.einsum("k,kab->ab", basis[:, k], E)
+            t = np.array([mapping[q] @ T @ mapping[q].T for q in members])
+            orbit_of.append(o)
+            pairs_of.append(members)
+            tensors_of.append(t)
+    return TensorOrbits(np.array(orbit_of, int), pairs_of, tensors_of)
+
+
+def coefficient_slots(fields, n_pairs, shape):
+    """
+    Compact per-pair view of vector or tensor coefficients.
+
+    Parameters
+    ----------
+    fields : VectorOrbits or TensorOrbits
+    n_pairs : int
+    shape : tuple
+        ``(3,)`` for vectors or ``(3, 3)`` for tensors.
+
+    Returns
+    -------
+    index : ndarray of int, (m, s)
+        Coefficient indices carried by each pair (``-1`` padding).
+    value : ndarray, (m, s) + shape
+        The corresponding Cartesian basis values.
+
+    """
+
+    values = fields.vectors if hasattr(fields, "vectors") else fields.tensors
+    slots = np.zeros(n_pairs, int)
+    for p in fields.pairs:
+        slots[p] += 1
+    s = max(1, int(slots.max()))
+    index = np.full((n_pairs, s), -1)
+    value = np.zeros((n_pairs, s) + tuple(shape))
+    fill = np.zeros(n_pairs, int)
+    for k, (p, v) in enumerate(zip(fields.pairs, values)):
+        index[p, fill[p]] = k
+        value[p, fill[p]] = v
+        fill[p] += 1
+    return index, value
+
+
+def rigid_unit_tensor_rows(orbits, tensors, clusters):
+    """
+    Ties making co-occupied units move as rigid wholes (tensor version).
+
+    The displacement correlation of every member pair between two rigid
+    units is the same tensor. See :func:`rigid_unit_vector_rows`.
+
+    Returns
+    -------
+    rows : ndarray, (r, len(tensors))
+
+    """
+
+    index, value = coefficient_slots(tensors, len(orbits), (3, 3))
+    lookup = {
+        (i, j, tuple(R)): p
+        for p, (i, j, R) in enumerate(zip(orbits.i, orbits.j, orbits.R))
+    }
+    unit = {}
+    for c in clusters:
+        if c.kind == "co-occupied":
+            for m, o in zip(c.members, c.offsets):
+                unit[m] = (c.members[0], c.offsets[0], o)
+
+    def field(p):
+        M = np.zeros((9, len(tensors)))
+        for k, t in zip(index[p], value[p]):
+            if k >= 0:
+                M[:, k] += t.ravel()
+        return M
+
+    rows = []
+    for p in orbits.representatives():
+        i, j, R = orbits.i[p], orbits.j[p], orbits.R[p]
+        a0, oa0, oa = unit.get(i, (i, 0, 0))
+        b0, ob0, ob = unit.get(j, (j, 0, 0))
+        if (a0, b0) == (i, j):
+            continue
+        ref = lookup.get((a0, b0, tuple(R + oa - oa0 - ob + ob0)))
+        if ref is None or ref == p:
+            continue
+        rows.append(field(p) - field(ref))
+    if not rows:
+        return np.zeros((0, len(tensors)))
     M = np.vstack(rows)
     return M[np.any(np.abs(M) > 1e-12, axis=1)]

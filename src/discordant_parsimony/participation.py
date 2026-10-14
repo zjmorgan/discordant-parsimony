@@ -63,6 +63,7 @@ def participation_scan(
     train,
     B=None,
     size=None,
+    mechanisms=None,
 ):
     """
     Refine every combination of participating units.
@@ -88,10 +89,13 @@ def participation_scan(
     B : ndarray, (m, nb), optional
         Background basis.
     size : dict, optional
-        Size-effect coefficients, ``{"A": design columns, "orbit": orbit
-        of each column, "rows": their constraint rows}``. Every unit
-        combination is then refined without and with the size effect
-        (labelled ``"size effect"``); its coefficients follow the same
+        Shorthand for one mechanism named ``"size effect"``.
+    mechanisms : list of dict, optional
+        Additional coefficient blocks, each ``{"name": label, "A":
+        design columns, "orbit": orbit of each column, "rows": their
+        constraint rows}`` (e.g. size effect, displacement
+        correlations). Every unit combination is refined with every
+        subset of mechanisms; their coefficients follow the same
         participation switches as the occupational ones.
 
     Returns
@@ -115,7 +119,14 @@ def participation_scan(
     B = np.zeros((len(y), 0)) if B is None else B
     models = []
     names = list(units)
-    sizes = [False, True] if size is not None else [False]
+    mechanisms = list(mechanisms or [])
+    if size is not None:
+        mechanisms.insert(0, dict(size, name="size effect"))
+    subsets = [
+        combo
+        for k in range(len(mechanisms) + 1)
+        for combo in itertools.combinations(range(len(mechanisms)), k)
+    ]
     for k in range(len(names) + 1):
         for chosen in itertools.combinations(names, k):
             on = np.isin(unit_i, chosen) & np.isin(unit_j, chosen)
@@ -125,22 +136,25 @@ def participation_scan(
             p_occ = parameterize(
                 orbits.n_orbits, fixed, np.vstack([rows, zero])
             )
-            for with_size in sizes:
-                if with_size:
-                    if not chosen:
-                        continue
-                    n_vec = size["A"].shape[1]
-                    off_vec = np.flatnonzero(~on[size["orbit"]])
-                    zero_vec = np.zeros((len(off_vec), n_vec))
-                    zero_vec[np.arange(len(off_vec)), off_vec] = 1
-                    p_vec = parameterize(
-                        n_vec, None, np.vstack([size["rows"], zero_vec])
+            for subset in subsets:
+                if subset and not chosen:
+                    continue
+                parts, blocks, label = [p_occ], [A], chosen
+                for m in subset:
+                    mech = mechanisms[m]
+                    n_m = mech["A"].shape[1]
+                    off_m = np.flatnonzero(~on[mech["orbit"]])
+                    zero_m = np.zeros((len(off_m), n_m))
+                    zero_m[np.arange(len(off_m)), off_m] = 1
+                    parts.append(
+                        parameterize(
+                            n_m, None, np.vstack([mech["rows"], zero_m])
+                        )
                     )
-                    p = stack_parameterizations(p_occ, p_vec)
-                    A_all = np.hstack([A, size["A"]])
-                    label = chosen + ("size effect",)
-                else:
-                    p, A_all, label = p_occ, A, chosen
+                    blocks.append(mech["A"])
+                    label = label + (mech["name"],)
+                p = stack_parameterizations(*parts) if subset else p_occ
+                A_all = np.hstack(blocks) if subset else A
                 r = refine(
                     y[train],
                     sigma[train],

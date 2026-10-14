@@ -15,7 +15,7 @@ contamination:
 rings are detected from the radial profile and masked, and a coarse
 radial background in |Q| absorbs the remaining isotropic scattering.
 
-Usage: ``python ba3co2o6_co3_participation.py [--q-min 6]``
+Usage: ``python ba3co2o6_co3_participation.py [--q-min 6] [--free-direction]``
 
 Requires the private data (``$DIFFUSE_DATA_ROOT/Ba3Co2O6_CO3_0p7_50K``).
 Output goes to ``results/`` (ignored by git).
@@ -44,6 +44,7 @@ from discordant_parsimony.refine import radial_background_basis
 from discordant_parsimony.rules import find_clusters
 from discordant_parsimony.scattering import (
     design_matrix,
+    displacement_design_matrix,
     size_effect_design_matrix,
 )
 from discordant_parsimony.selection import (
@@ -53,10 +54,12 @@ from discordant_parsimony.selection import (
     powder_ring_mask,
 )
 from discordant_parsimony.symmetry import (
+    coefficient_slots,
     pair_orbits,
+    rigid_unit_tensor_rows,
     rigid_unit_vector_rows,
+    tensor_orbits,
     vector_orbits,
-    vector_slots,
 )
 
 ROOT = data_root() / "Ba3Co2O6_CO3_0p7_50K"
@@ -100,7 +103,7 @@ def report(models):
         )
 
 
-def main(q_min=0.0):
+def main(q_min=0.0, axis=(0, 0, 1)):
     data = next(ROOT.glob("*_data.nxs"))
     norm = next(ROOT.glob("*_norm.nxs"))
     cif = next(ROOT.glob("*.cif"))
@@ -171,32 +174,59 @@ def main(q_min=0.0):
         operators=W,
         projection=volume.W,
     )
+    kw = dict(widths=volume.widths, operators=W, projection=volume.W)
     vectors = vector_orbits(
-        orbits, structure, active, exclude=fixed[0], axis=(0, 0, 1)
+        orbits, structure, active, exclude=fixed[0], axis=axis
     )
     vector_rows = rigid_unit_vector_rows(orbits, vectors, clusters)
+    tensors = tensor_orbits(
+        orbits, structure, active, exclude=fixed[0], axis=axis
+    )
+    tensor_rows = rigid_unit_tensor_rows(orbits, tensors, clusters)
+    where = "along c" if axis is not None else "in any allowed direction"
     print(
-        f"{len(vectors)} size-effect coefficients along c,"
-        f" {parameterize(len(vectors), None, vector_rows).n_free} free"
+        f"displacements {where}: {len(vectors)} size-effect and"
+        f" {len(tensors)} displacement-correlation coefficients,"
+        f" {parameterize(len(vectors), None, vector_rows).n_free} and"
+        f" {parameterize(len(tensors), None, tensor_rows).n_free} free"
         " after rigid-unit ties"
     )
     A_size = size_effect_design_matrix(
-        h,
-        orbits,
-        vectors,
-        active,
-        structure,
-        widths=volume.widths,
-        operators=W,
-        projection=volume.W,
+        h, orbits, vectors, active, structure, **kw
     )
-    size = {"A": A_size, "orbit": vectors.orbit, "rows": vector_rows}
+    A_disp = displacement_design_matrix(
+        h, orbits, tensors, active, structure, **kw
+    )
+    mechanisms = [
+        {
+            "name": "size effect",
+            "A": A_size,
+            "orbit": vectors.orbit,
+            "rows": vector_rows,
+        },
+        {
+            "name": "displacements",
+            "A": A_disp,
+            "orbit": tensors.orbit,
+            "rows": tensor_rows,
+        },
+    ]
     knots = np.arange(Q.min(), Q.max() + KNOT_SPACING, KNOT_SPACING)
     B = radial_background_basis(Q, knots)
     train = rng.random(len(h)) < TRAIN
 
     models = participation_scan(
-        y, sigma, A, orbits, active, UNITS, fixed, rows, train, B, size
+        y,
+        sigma,
+        A,
+        orbits,
+        active,
+        UNITS,
+        fixed,
+        rows,
+        train,
+        B,
+        mechanisms=mechanisms,
     )
     print("participation scan (held-out positions):")
     report(models)
@@ -224,25 +254,46 @@ def main(q_min=0.0):
             f" alpha = {best.c[o] / norm_:+.3f} +/- {best.esd[o] / norm_:.3f}"
             f"{flag}"
         )
-    if "size effect" in models[0].units:
-        theta = best.c[orbits.n_orbits :]
-        theta_esd = best.esd[orbits.n_orbits :]
-        index, value = vector_slots(vectors, len(orbits))
-        print("refined size effect between carbon atoms (sigma . d_hat > 0:")
-        print("  the neighbor moves toward the vacancy):")
-        for o in np.unique(vectors.orbit):
+    # coefficient blocks of the best model, in mechanism order
+    offset, blocks = orbits.n_orbits, {}
+    for mech in mechanisms:
+        if mech["name"] in models[0].units:
+            n_m = mech["A"].shape[1]
+            blocks[mech["name"]] = (offset, n_m)
+            offset += n_m
+
+    def carbon_pairs(fields, shape):
+        index, value = coefficient_slots(fields, len(orbits), shape)
+        for o in np.unique(fields.orbit):
             p = reps[o]
             li, lj = active.label[orbits.i[p]], active.label[orbits.j[p]]
-            if li[0] != "C" or lj[0] != "C" or orbits.distance[o] > 30:
-                continue
-            ks = [k for k in index[p] if k >= 0]
-            vec = sum(theta[k] * value[p, list(index[p]).index(k)] for k in ks)
-            err = np.sqrt(sum((theta_esd[k]) ** 2 for k in ks))
+            if li[0] == "C" and lj[0] == "C" and orbits.distance[o] <= 30:
+                ks = [k for k in index[p] if k >= 0]
+                slots = [list(index[p]).index(k) for k in ks]
+                yield o, p, li, lj, ks, [value[p, q] for q in slots]
+
+    if "size effect" in blocks:
+        o0, _ = blocks["size effect"]
+        print("refined size effect between carbon atoms (sigma . d_hat > 0:")
+        print("  the neighbor moves toward the vacancy):")
+        for o, p, li, lj, ks, vals in carbon_pairs(vectors, (3,)):
+            vec = sum(best.c[o0 + k] * v for k, v in zip(ks, vals))
+            err = np.sqrt(sum(best.esd[o0 + k] ** 2 for k in ks))
             dhat = orbits.d[p] @ structure.A.T
             dhat = dhat / np.linalg.norm(dhat)
             print(
                 f"  {li}-{lj} {orbits.distance[o]:6.3f} A:"
                 f" sigma.d_hat = {vec @ dhat:+.5f} +/- {err:.5f} A"
+            )
+    if "displacements" in blocks:
+        o0, _ = blocks["displacements"]
+        print("refined displacement correlations between carbon atoms:")
+        for o, p, li, lj, ks, vals in carbon_pairs(tensors, (3, 3)):
+            V = sum(best.c[o0 + k] * v for k, v in zip(ks, vals))
+            err = np.sqrt(sum(best.esd[o0 + k] ** 2 for k in ks))
+            print(
+                f"  {li}-{lj} {orbits.distance[o]:6.3f} A:"
+                f" V_zz = {V[2, 2]:+.5f} +/- {err:.5f} A^2"
             )
     free = best.free[: orbits.n_orbits]
     best_c, best_esd = best.c[: orbits.n_orbits], best.esd[: orbits.n_orbits]
@@ -252,7 +303,9 @@ def main(q_min=0.0):
         " lie outside the 0/1 realizability bounds (> 2 esd)"
     )
 
-    A_best = np.hstack([A, A_size]) if len(best.c) > A.shape[1] else A
+    A_best = np.hstack(
+        [A] + [m["A"] for m in mechanisms if m["name"] in models[0].units]
+    )
     out = Path(__file__).resolve().parents[1] / "results"
     out.mkdir(exist_ok=True)
     np.savez(
@@ -272,4 +325,10 @@ def main(q_min=0.0):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--q-min", type=float, default=0.0)
-    main(parser.parse_args().q_min)
+    parser.add_argument(
+        "--free-direction",
+        action="store_true",
+        help="allow displacements in every symmetry-allowed direction",
+    )
+    args = parser.parse_args()
+    main(args.q_min, None if args.free_direction else (0, 0, 1))
